@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1620984091 source:/home/maj/Programing/dotclicker/Game.cpp
+	"Game.h"
+	<thread>
+	<string>
+
+1620984057 /home/maj/Programing/dotclicker/Game.h
+	<thread>
+	<string>
+

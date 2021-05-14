@@ -1,15 +1,58 @@
 {
 	"version": "2.0.0",
-	"tasks": [
+	"tasks": [{
+			"type": "cppbuild",
+			"label": "main",
+			"command": "/bin/g++",
+			"args": [
+				"-Wall",
+				"-fexceptions",
+				"-g",
+				"-Iinclude",
+				"-c",
+				"${fileDirname}/main.cpp",
+				"-o",
+				"${fileDirname}/obj/Debug/main.o"
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": "build",
+			"detail": "compiler: /bin/g++"
+		},
+		{
+			"type": "cppbuild",
+			"label": "Game",
+			"command": "/bin/g++",
+			"args": [
+				"-Wall",
+				"-fexceptions",
+				"-g",
+				"-Iinclude",
+				"-c",
+				"${fileDirname}/Game.cpp",
+				"-o",
+				"${fileDirname}/obj/Debug/Game.o"
+			],
+			"problemMatcher": [
+				"$gcc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "compiler: /bin/g++",
+			"dependsOn": ["main"]
+		},
 		{
 			"type": "cppbuild",
 			"label": "C/C++: g++ build active file",
 			"command": "/bin/g++",
 			"args": [
-				"-g",
-				"${file}",
 				"-o",
-				"${fileDirname}/bin/Debug/dotclicker"
+				"${fileDirname}/bin/Debug/dotclicker",
+				"${fileDirname}/obj/Debug/main.o",
+				"${fileDirname}/obj/Debug/Game.o"
 			],
 			"options": {
 				"cwd": "${fileDirname}/bin/Debug"
@@ -21,7 +64,8 @@
 				"kind": "build",
 				"isDefault": true
 			},
-			"detail": "compiler: /bin/g++"
+			"detail": "compiler: /bin/g++",
+			"dependsOn": ["Game"]
 		}
 	]
 }
