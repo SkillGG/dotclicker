@@ -174,7 +174,7 @@ void Game::userInput(string s) {
                 bool jestUl = false;
                 for (Ulepszenie *u : this->player->getUlepszenia()) {
                     if (u->getId() == sint) {
-                        u->toggleEquip();
+                        u->toggleEquip(this);
                         jestUl = true;
                         break;
                     }
@@ -361,7 +361,7 @@ bool Player::kupUlepszenie(int uid) {
         this->money -= u->getCost();
         this->ulepszenia.insert(this->ulepszenia.end(), u);
         u->buy(this->Gra);
-
+        u->equip(this->Gra);
         return true;
     } else
         return false;
@@ -383,10 +383,14 @@ bool Player::maUlepszenie(int uid) {
 
 void Player::equipUlepszenie(int id) {
     if (this->maUlepszenie(id)) {
-        this->ulepszenia.at(id)->toggleEquip();
+        this->ulepszenia.at(id)->toggleEquip(this->Gra);
     }
 }
 
+void Player::removeFeedableCharacter(string s) {
+    auto it = this->characters.find(s);
+    this->characters.erase(it);
+}
 void Player::addFeedableCharacter(string c, int i) { this->characters.insert(pair<string, int>(c, i)); }
 map<string, int> Player::getCharacters() { return this->characters; }
 
@@ -399,14 +403,17 @@ int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
     // dodaj drugie tyle pieniedzy
     return bm;
 }
-void PodwojnePieniadze1::buy(Game *g) {
-    this->toggleEquip();
-}
+void PodwojnePieniadze1::buy(Game *g) {}
+void PodwojnePieniadze1::equip(Game *g) {}
+void PodwojnePieniadze1::unequip(Game *g) {}
 
 UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
 std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
 int UzycieSlowaOwoc::use(Game *g, string s, unsigned int bm) { return 0; /* nie dodawaj zadnej kasy */ }
-void UzycieSlowaOwoc::buy(Game *g) {
-    this->toggleEquip();
+void UzycieSlowaOwoc::buy(Game *g) {}
+void UzycieSlowaOwoc::equip(Game *g) {
     g->player->addFeedableCharacter("owoc", 15);
+}
+void UzycieSlowaOwoc::unequip(Game *g) {
+    g->player->removeFeedableCharacter("owoc");
 }
