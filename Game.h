@@ -54,6 +54,8 @@ public:
     bool kupUlepszenie(int uid);
     /** Zaloz ulepszenie */
     void equipUlepszenie(int uid);
+    /** Usun string do wpisania */
+    void removeFeedableCharacter(std::string c);
     /** Dodaj znak, do wpisania */
     void addFeedableCharacter(std::string c, int i);
     /** Daj playerowi string */
@@ -109,13 +111,22 @@ public:
     /** Czy jest zalozone */
     bool isEquipped() { return this->equipped; }
     /** zdejmij / zaloz ulepszenie */
-    void toggleEquip() { this->equipped = !this->equipped; }
+    void toggleEquip(Game *g) {
+        this->equipped = !this->equipped;
+        if (this->equipped)
+            this->equip(g);
+        else
+            this->unequip(g);
+    }
     /** opis getter */
     virtual std::string getOpis() { return "Ulepszenie#" + std::__cxx11::to_string(this->id); };
     /** co robi zaraz po kupieniu */
     virtual void buy(Game *p){};
     /** co robi przy uzyciu */
     virtual int use(Game *p, std::string s, unsigned int bm) { return 0; };
+    virtual void equip(Game *p){};
+    /** co robi po zdjeciu */
+    virtual void unequip(Game *p){};
     /** Konstruktor */
     Ulepszenie(int id, int cost);
 };
@@ -127,6 +138,9 @@ public:
     void buy(Game *p);
     /** co robi przy uzyciu */
     int use(Game *p, std::string s, unsigned int bm);
+    void equip(Game *p);
+    /** co robi przy unequip */
+    void unequip(Game *p);
     PodwojnePieniadze1(int cost);
 };
 
@@ -135,6 +149,8 @@ public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);
+    void equip(Game *p);
+    void unequip(Game *p);
     UzycieSlowaOwoc(int cost);
 };
 
