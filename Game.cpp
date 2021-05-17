@@ -64,6 +64,7 @@ void Game::userInput(string s) {
         this->stop();
     }
     switch (this->getState()) {
+
     case GameState::START:
         // What to draw in START
         if (checkCommand("menu", s)) {
@@ -71,6 +72,7 @@ void Game::userInput(string s) {
         } else
             this->commandNotFoundError = true;
         break;
+
     case GameState::MENU:
         // What to draw in MENU
         if (checkCommand("powrot", s)) {
@@ -78,15 +80,27 @@ void Game::userInput(string s) {
         } else
             this->commandNotFoundError = true;
         break;
+
     case GameState::GAME:
         // What to draw in GAME
+        //if (checkCommand("s", s)) {
+          //  this->state = GameState::MENU;
+      //  } else
+         //   this->commandNotFoundError = true;
         break;
+
     case GameState::AUTORZY:
         //// What to draw in AUTORZY
+        if (checkCommand("autorzy", s)) {
+            this->state = GameState::AUTORZY;
+        } else
+            this->commandNotFoundError = true;
         break;
+
     case GameState::KOMENDY:
          //// What to draw in KOMENDY
         break;
+
     default:
         cout << "Something went wrong!";
         break;
@@ -106,6 +120,7 @@ void DrawFromVector(vector<string> v) {
 void Game::Draw() {
     vector<string> m;
     vector<string> s;
+    vector<string> a;
     switch (this->getState()) {
     case START:
         // What to draw in START
@@ -133,7 +148,9 @@ void Game::Draw() {
             "=============================================================================================================="};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
+            s.push_back("");
             s.push_back("Nie znaleziono komendy!");
+            s.push_back("");
             s.push_back("==============================================================================================================");
         }
         DrawFromVector(s);
@@ -152,8 +169,6 @@ void Game::Draw() {
             "",
             "",
             "",
-            "",
-            "",
             "                                          Zacznij zarabiac = Start",
             "",
             "                                          Ulepszenia = Ulepsz",
@@ -165,14 +180,52 @@ void Game::Draw() {
             "=============================================================================================================="};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            m.push_back("Nie znaleziono komendy!");
-            m.push_back("==============================================================================================================");
+            s.push_back("");
+            s.push_back("Nie znaleziono komendy!");
+            s.push_back("");
+            s.push_back("==============================================================================================================");
         }
         DrawFromVector(m);
         break;
     case GAME:
         // What to draw in GAME
         break;
+    case AUTORZY:
+        a = {
+        "==============================================================================================================",
+        "",
+        "",
+        "                            ___   __  ____________  ____  _______  __
+                                   /   | / / / /_  __/ __ \/ __ \/__  /\ \/ /
+                                  / /| |/ / / / / / / / / / /_/ /  / /  \  /
+                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /
+                                /_/  |_\____/ /_/  \____/_/ |_|  /____//_/
+
+
+
+
+
+                                      ////////// = Marcin Majewski
+
+                                      ////////// = Karol Sa³aciñski
+
+                                      ////////// = Maciej Gawin
+
+                                      ////////// = Krystian Soko³owski
+
+                                      ///////// = Szymon S³oniowski
+
+
+
+
+
+
+ Powrot = Powrot                             < Wyjscie = Quit >                             Komendy = Help
+
+
+==============================================================================================================
+        }
+
     default:
         // grrrr, error
         cout << "Something went wrong!";
