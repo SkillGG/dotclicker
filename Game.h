@@ -11,6 +11,7 @@
  */
 enum GameState {
     ULEPSZENIA = 4,
+    KOMENDY = 4,
     AUTORZY = 3,
     GAME = 2,
     MENU = 1,
