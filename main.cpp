@@ -1,8 +1,8 @@
+#include "Game.h"
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <thread>
-#include <stdio.h>
-#include "Game.h"
 
 using namespace std;
 
@@ -11,15 +11,17 @@ int thistick = 0;
 
 bool running = true;
 
-int main()
-{
+int main() {
     Game *g = new Game();
-    while (g->isRunning() == true)
-    {
+    while (g->isRunning() == true) {
+        g->Draw();
+        system("cls");
+        system("clear");
         string s;
         getline(cin, s);
         g->userInput(s);
     }
     cout << endl;
+    delete g;
     return 0;
 }
