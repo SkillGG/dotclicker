@@ -1,15 +1,24 @@
 #include "Game.h"
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <thread>
 
 using namespace std;
 
+int checkCommand(string s1, string s2) {
+    //convert s1 and s2 into lower case strings
+    transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
+    transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
+    if (s1.compare(s2) == 0)
+        return true; //The strings are same
+    return false;    //not matched
+}
+
 Player::Player(Game *g) {
     this->money = 0;
     this->Gra = g;
     this->ulepszenia = {};
-
 }
 
 int Ulepszenie::getId() { return this->id; }
@@ -51,19 +60,19 @@ GameState Game::getState() { return this->state; }
  */
 void Game::userInput(string s) {
     this->lastInput = s;
-    if (s == "quit" || s == "Quit") {
+    if (checkCommand("quit", s)) {
         this->stop();
     }
     switch (this->getState()) {
     case GameState::START:
         // What to draw in START
-        if (s == "menu" || s == "Menu") {
-        this->state = GameState::MENU;
+        if (checkCommand("menu", s)) {
+            this->state = GameState::MENU;
         }
         break;
     case GameState::MENU:
         // What to draw in MENU
-        if (s == "Powrot" || s == "powrot"){
+        if (checkCommand("powrot", s)) {
             this->state = GameState::START;
         }
         break;
@@ -72,7 +81,7 @@ void Game::userInput(string s) {
         break;
     case GameState::AUTORZY:
         //// What to draw in GAME
-         break;
+        break;
     default:
         cout << "Something went wrong!";
         break;
@@ -94,34 +103,34 @@ void Game::Draw() {
     vector<string> s;
     switch (this->getState()) {
     case START:
-         // What to draw in START
+        // What to draw in START
         s = {
-"==============================================================================================================",
-"",
-"                             ____   ___ _____    ____ _     ___ ____ _  _______ ____",
-"                            |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
-"                            | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
-"                            | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
-"                            |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
-"",
-"",
-"",
-"",
-"",
-"                                                Menu = Menu",
-"",
-"                                                Credits = Autorzy",
-"",
-"                                                Komendy = Help",
-"",
-"                                                Wyjscie = Quit",
-"",
-"=============================================================================================================="};
+            "==============================================================================================================",
+            "",
+            "                             ____   ___ _____    ____ _     ___ ____ _  _______ ____",
+            "                            |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
+            "                            | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
+            "                            | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
+            "                            |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "                                                Menu = Menu",
+            "",
+            "                                                Credits = Autorzy",
+            "",
+            "                                                Komendy = Help",
+            "",
+            "                                                Wyjscie = Quit",
+            "",
+            "=============================================================================================================="};
         DrawFromVector(s);
         break;
     case MENU:
         // What to draw in MENU
-        m  = {
+        m = {
             "==============================================================================================================",
             "",
             "                                          __  __   ___   _  _   _   _ ",
