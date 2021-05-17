@@ -34,7 +34,7 @@ Player::Player(Game *g) {
 }
 
 int Ulepszenie::getId() { return this->id; }
-int Ulepszenie::getCost() { return this->cost; }
+unsigned int Ulepszenie::getCost() { return this->cost; }
 
 Ulepszenie::Ulepszenie(int i, int c) {
     this->id = i;
@@ -108,24 +108,24 @@ void Player::feedString(string s) {
  */
 void Game::userInput(string s) {
     this->lastInput = s;
-    if (checkCommand("quit", s)|| checkCommand("q", s) ) {
+    if (checkCommand("quit", s) || checkCommand("q", s)) {
         this->stop();
     }
     switch (this->getState()) {
 
     case GameState::START:
         // What to draw in START
-        if (checkCommand("menu", s)|| checkCommand("m", s) ) {
+        if (checkCommand("menu", s) || checkCommand("m", s)) {
             this->state = GameState::MENU;
-        } else if (checkCommand("autorzy", s) || checkCommand("a" ,s)) {
+        } else if (checkCommand("autorzy", s) || checkCommand("a", s)) {
             this->state = GameState::AUTORZY;
-        }else
+        } else
             this->commandNotFoundError = true;
         break;
 
     case GameState::MENU:
         // What to draw in MENU
-        if (checkCommand("powrot", s) || checkCommand( "p", s)) {
+        if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
         } else if (checkCommand("start", s)) {
             this->state = GameState::GAME;
@@ -143,18 +143,16 @@ void Game::userInput(string s) {
             this->player->feedString(s);
         }
         break;
-
     case GameState::AUTORZY:
-          //// What to draw in AUTORZY
-         if (checkCommand("powrot", s) || checkCommand("p", s)) {
+        //// What to draw in AUTORZY
+        if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
-        } else
+        } else {
             this->commandNotFoundError = true;
-
-            break;
-
+        }
+        break;
     case GameState::ULEPSZENIA:
-         //// What to draw in ULEPSZENIA
+        //// What to draw in ULEPSZENIA
         switch (this->ulstate) {
         case KUP:
             if (checkCommand("p", s) || checkCommand("powrot", s)) {
@@ -269,7 +267,7 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"", "Nie znaleziono komendy!","", separator});
+            u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
         }
         DrawFromVector(s);
         break;
@@ -306,43 +304,43 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"","Nie znaleziono komendy!","", separator});
+            u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
         }
         DrawFromVector(m);
         break;
     case AUTORZY:
         a = {
-        separator,
-        "",
-        "",
-        "                                    ___   __  ____________  ____  _______  __",
-        "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
-        "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
-        "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
-        "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "                                   Marcin Majewski = Glowny Programista",
-        "",
-        "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
-        "",
-        "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
-        "",
-        "                                   Krystian Sokolowski = Beater i Poprawa bledow",
-        "",
-        "                                   Szymon Sloniowski = Interfejs Gry",
-        "",
-        "",
-        "",
-        "",
-        " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
-separator};
-DrawFromVector(a);
+            separator,
+            "",
+            "",
+            "                                    ___   __  ____________  ____  _______  __",
+            "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
+            "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
+            "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
+            "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "                                   Marcin Majewski = Glowny Programista",
+            "",
+            "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
+            "",
+            "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
+            "",
+            "                                   Krystian Sokolowski = Beater i Poprawa bledow",
+            "",
+            "                                   Szymon Sloniowski = Interfejs Gry",
+            "",
+            "",
+            "",
+            "",
+            " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
+            separator};
+        DrawFromVector(a);
         break;
-        case GAME:
+    case GAME:
         // What to draw in GAME
         for (pair<string, int> chr : this->player->getCharacters()) {
             lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
@@ -410,7 +408,6 @@ DrawFromVector(a);
         cout << "Something went wrong!";
         this->stop();
         break;
-
     }
 }
 

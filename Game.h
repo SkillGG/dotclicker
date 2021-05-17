@@ -97,7 +97,7 @@ public:
 class Ulepszenie {
 private:
     /** cena ulepszenia */
-    int cost;
+    unsigned int cost;
     /** id ulepszenia */
     int id;
     /** Czy jest wlaczone */
@@ -107,7 +107,7 @@ public:
     /** Daj ID */
     int getId();
     /** daj mi cene */
-    int getCost();
+    unsigned int getCost();
     /** Czy jest zalozone */
     bool isEquipped() { return this->equipped; }
     /** zdejmij / zaloz ulepszenie */
@@ -128,7 +128,7 @@ public:
     /** co robi po zdjeciu */
     virtual void unequip(Game *p){};
     /** Konstruktor */
-    Ulepszenie(int id, int cost);
+    Ulepszenie(int id, unsigned int cost);
 };
 
 class PodwojnePieniadze1 : public Ulepszenie {
