@@ -94,6 +94,7 @@ private:
     GameState state;
 
 public:
+    bool commandNotFoundError;
     std::string lastInput;
     GameState getState();
     bool isRunning();
