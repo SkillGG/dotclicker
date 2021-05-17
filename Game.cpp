@@ -36,7 +36,7 @@ Player::Player(Game *g) {
 int Ulepszenie::getId() { return this->id; }
 unsigned int Ulepszenie::getCost() { return this->cost; }
 
-Ulepszenie::Ulepszenie(int i, int c) {
+Ulepszenie::Ulepszenie(int i, unsigned int c) {
     this->id = i;
     this->cost = c;
 }
@@ -54,6 +54,7 @@ Game::Game() {
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("debug", 10000);
+    this->ulstate=UlepszeniaState::MAIN;
 }
 
 /** Zatrzymaj gre */
@@ -399,6 +400,8 @@ void Game::Draw() {
         case MAIN:
             u.insert(u.end(), {"KUP (b) - wejdz do sklepu", "EQ (e) - zarzadzaj ulepszeniami", separator});
             break;
+        default:
+            cout << (int)this->ulstate;
         }
         u.insert(u.end(), {"Wpisz powrot(p) aby wyjsc", separator});
         DrawFromVector(u);

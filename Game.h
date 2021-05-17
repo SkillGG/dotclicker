@@ -18,9 +18,9 @@ enum GameState {
 };
 
 enum UlepszeniaState {
-    MAIN,
-    EQ,
-    KUP
+    MAIN = 1,
+    EQ = 2,
+    KUP = 3
 };
 
 class Game;
