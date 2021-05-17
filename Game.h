@@ -9,6 +9,7 @@
  * Stany, w jakich gra moze byc
  */
 enum GameState {
+    KOMENDY = 4,
     AUTORZY = 3,
     GAME = 2,
     MENU = 1,

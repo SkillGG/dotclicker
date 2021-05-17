@@ -80,7 +80,10 @@ void Game::userInput(string s) {
         // What to draw in GAME
         break;
     case GameState::AUTORZY:
-        //// What to draw in GAME
+        //// What to draw in AUTORZY
+        break;
+    case GameState::KOMENDY:
+         //// What to draw in KOMENDY
         break;
     default:
         cout << "Something went wrong!";
