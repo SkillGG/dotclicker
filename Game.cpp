@@ -112,6 +112,7 @@ void Game::userInput(string s) {
         this->stop();
     }
     switch (this->getState()) {
+
     case GameState::START:
         // What to draw in START
         if (checkCommand("menu", s)) {
@@ -119,6 +120,7 @@ void Game::userInput(string s) {
         } else
             this->commandNotFoundError = true;
         break;
+
     case GameState::MENU:
         // What to draw in MENU
         if (checkCommand("powrot", s)) {
@@ -128,6 +130,7 @@ void Game::userInput(string s) {
         } else
             this->commandNotFoundError = true;
         break;
+
     case GameState::GAME:
         // What to draw in GAME
         if (checkCommand("menu", s)) {
@@ -138,10 +141,20 @@ void Game::userInput(string s) {
             this->player->feedString(s);
         }
         break;
+
     case GameState::AUTORZY:
-        // What to draw in GAME
+          //// What to draw in AUTORZY
+        if (checkCommand("autorzy", s)) {
+            this->state = GameState::AUTORZY;
+        } else
+            this->commandNotFoundError = true;
+        break;
+
+    case GameState::KOMENDY:
+         //// What to draw in KOMENDY
         break;
     case GameState::ULEPSZENIA:
+         //// What to draw in ULEPSZENIA
         switch (this->ulstate) {
         case KUP:
             if (checkCommand("p", s) || checkCommand("powrot", s)) {
@@ -198,6 +211,7 @@ void Game::userInput(string s) {
             break;
         }
         break;
+
     default:
         cout << "Something went wrong!";
         break;
@@ -215,6 +229,7 @@ void DrawFromVector(vector<string> v) {
  * Jest to funkcja, ktora ma wyswietlac tekst zaleznie od wybranego stanu
  * */
 void Game::Draw() {
+
     vector<string> m, s, g, u;
     string lits = "\n";
     string ulepszeniaString = "";
@@ -247,7 +262,7 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"NIE ZNALEZIONO KOMENDY!", separator});
+            u.insert(u.end(), {"", "Nie znaleziono komendy!","", separator});
         }
         DrawFromVector(s);
         break;
@@ -265,8 +280,6 @@ void Game::Draw() {
             "",
             "",
             "",
-            "",
-            "",
             "                                          Zacznij zarabiac = Start",
             "",
             "                                          Powrot = Powrot",
@@ -276,7 +289,7 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"NIE ZNALEZIONO KOMENDY!", separator});
+            u.insert(u.end(), {"","Nie znaleziono komendy!","", separator});
         }
         DrawFromVector(m);
         break;
@@ -343,6 +356,42 @@ void Game::Draw() {
         u.insert(u.end(), {"Wpisz powrot(p) aby wyjsc", separator});
         DrawFromVector(u);
         break;
+    case AUTORZY:
+        a = {
+        separator,
+        "",
+        "",
+        "                            ___   __  ____________  ____  _______  __
+                                   /   | / / / /_  __/ __ \/ __ \/__  /\ \/ /
+                                  / /| |/ / / / / / / / / / /_/ /  / /  \  /
+                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /
+                                /_/  |_\____/ /_/  \____/_/ |_|  /____//_/
+
+
+
+
+
+                                      ////////// = Marcin Majewski
+
+                                      ////////// = Karol Sa³aciñski
+
+                                      ////////// = Maciej Gawin
+
+                                      ////////// = Krystian Soko³owski
+
+                                      ///////// = Szymon S³oniowski
+
+
+
+
+
+
+ Powrot = Powrot                             < Wyjscie = Quit >                             Komendy = Help
+
+
+separator
+        }
+
     default:
         // grrrr, error
         cout << "Something went wrong!";
