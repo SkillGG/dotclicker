@@ -32,7 +32,7 @@ class Ulepszenie;
 class Player {
 private:
     /** pieniadze gracza */
-    int money;
+    unsigned int money;
     /** ulepszenia ktore posiada gracz */
     std::vector<Ulepszenie *> ulepszenia;
     /* dane calej gry */
@@ -42,8 +42,8 @@ private:
 
 public:
     /** ile ma pieniedzy */
-    int getMoney();
-    int calculateBaseMoney(std::string s);
+    unsigned int getMoney();
+    unsigned int calculateBaseMoney(std::string s);
     std::map<std::string, int> getCharacters();
     /** Dodaj / Odejmin pieniedzy */
     void addMoney(int x);
@@ -52,8 +52,6 @@ public:
     bool maUlepszenie(int uid);
     /** Kup Ulepszenie */
     bool kupUlepszenie(int uid);
-    /** Uzyj ulepszenia */
-    void useUlepszenie(int uid);
     /** Zaloz ulepszenie */
     void equipUlepszenie(int uid);
     /** Dodaj znak, do wpisania */
@@ -115,9 +113,9 @@ public:
     /** opis getter */
     virtual std::string getOpis() { return "Ulepszenie#" + std::__cxx11::to_string(this->id); };
     /** co robi zaraz po kupieniu */
-    virtual void buy(Game *p, std::string s){};
+    virtual void buy(Game *p){};
     /** co robi przy uzyciu */
-    virtual int use(Game *p) { return 0; };
+    virtual int use(Game *p, std::string s, unsigned int bm) { return 0; };
     /** Konstruktor */
     Ulepszenie(int id, int cost);
 };
@@ -128,7 +126,7 @@ public:
     /** co robi tuz po kupnie */
     void buy(Game *p);
     /** co robi przy uzyciu */
-    int use(Game *p, std::string s);
+    int use(Game *p, std::string s, unsigned int bm);
     PodwojnePieniadze1(int cost);
 };
 
@@ -136,7 +134,7 @@ class UzycieSlowaOwoc : public Ulepszenie {
 public:
     std::string getOpis();
     void buy(Game *p);
-    int use(Game *p, std::string s);
+    int use(Game *p, std::string s, unsigned int bm);
     UzycieSlowaOwoc(int cost);
 };
 
