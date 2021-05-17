@@ -53,6 +53,7 @@ Game::Game() {
     this->running = true;
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
+    this->player->addFeedableCharacter("debug", 10000);
 }
 
 /** Zatrzymaj gre */
@@ -83,7 +84,7 @@ Ulepszenie *Game::getUlepszenie(int uid) {
     return nullptr;
 }
 
-int Player::calculateBaseMoney(string s) {
+unsigned int Player::calculateBaseMoney(string s) {
     int base = 0;
     for (const auto c : this->characters) {
         string fr(c.first);
@@ -97,7 +98,7 @@ void Player::feedString(string s) {
     int basemoney = calculateBaseMoney(s);
     for (const auto f : this->ulepszenia) {
         if (f->isEquipped())
-            basemoney = f->use(this->Gra);
+            basemoney += f->use(this->Gra, s, basemoney);
     }
     this->addMoney(basemoney);
 }
@@ -169,9 +170,20 @@ void Game::userInput(string s) {
             if (checkCommand("p", s) || checkCommand("powrot", s)) {
                 this->ulstate = UlepszeniaState::MAIN;
             } else if (isInt(s)) {
-
+                int sint = atoi(s.c_str());
+                bool jestUl = false;
+                for (Ulepszenie *u : this->player->getUlepszenia()) {
+                    if (u->getId() == sint) {
+                        u->toggleEquip();
+                        jestUl = true;
+                        break;
+                    }
+                }
+                if (!jestUl) {
+                    this->outOfRangeError = true;
+                }
             } else
-                this->commandNotFoundError = true;
+                this->notIntegerError = true;
             break;
         case MAIN:
             if (checkCommand("p", s) || checkCommand("powrot", s)) {
@@ -339,7 +351,7 @@ void Game::Draw() {
     }
 }
 
-int Player::getMoney() { return this->money; }
+unsigned int Player::getMoney() { return this->money; }
 
 void Player::addMoney(int i) { this->money += i; }
 
@@ -348,6 +360,8 @@ bool Player::kupUlepszenie(int uid) {
     if (this->getMoney() > u->getCost()) {
         this->money -= u->getCost();
         this->ulepszenia.insert(this->ulepszenia.end(), u);
+        u->buy(this->Gra);
+
         return true;
     } else
         return false;
@@ -367,13 +381,6 @@ bool Player::maUlepszenie(int uid) {
     return false;
 }
 
-void Player::useUlepszenie(int id) {
-    if (this->maUlepszenie(id)) {
-        if (this->ulepszenia.at(id)->isEquipped())
-            this->ulepszenia.at(id)->use(this->Gra);
-    }
-}
-
 void Player::equipUlepszenie(int id) {
     if (this->maUlepszenie(id)) {
         this->ulepszenia.at(id)->toggleEquip();
@@ -388,12 +395,18 @@ map<string, int> Player::getCharacters() { return this->characters; }
 PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
 
 std::string PodwojnePieniadze1::getOpis() { return "Podwaja ilosc pieniedzy"; }
-int PodwojnePieniadze1::use(Game *g, string s) {
-    return g->player->calculateBaseMoney(s);
+int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
+    // dodaj drugie tyle pieniedzy
+    return bm;
 }
-void PodwojnePieniadze1::buy(Game *g) {}
+void PodwojnePieniadze1::buy(Game *g) {
+    this->toggleEquip();
+}
 
 UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
 std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
-int UzycieSlowaOwoc::use(Game *g, string s) { return 0; }
-void UzycieSlowaOwoc::buy(Game *g) { g->player->addFeedableCharacter("owoc", 15); }
+int UzycieSlowaOwoc::use(Game *g, string s, unsigned int bm) { return 0; /* nie dodawaj zadnej kasy */ }
+void UzycieSlowaOwoc::buy(Game *g) {
+    this->toggleEquip();
+    g->player->addFeedableCharacter("owoc", 15);
+}
