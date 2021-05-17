@@ -44,16 +44,15 @@ Ulepszenie::Ulepszenie(int i, int c) {
 /** Ustaw domyslne wartosci */
 Game::Game() {
     // lista mozliwych ulepszen
-    this->mozliweUlepszenia = {(Ulepszenie *)(new PodwojnePieniadze1(100))};
+    this->mozliweUlepszenia = {
+        (Ulepszenie *)(new PodwojnePieniadze1(100)),
+        (Ulepszenie *)(new UzycieSlowaOwoc(1500))};
     this->commandNotFoundError = false;
     this->notEnoughMoneyError = false;
     this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
-    this->player->addFeedableCharacter("in", 10);
-    this->player->addFeedableCharacter("or", 10);
-    this->player->addFeedableCharacter("of", 10);
 }
 
 /** Zatrzymaj gre */
@@ -289,7 +288,7 @@ void Game::Draw() {
             separator};
         switch (this->ulstate) {
         case KUP:
-            u.insert(u.end(), {"SKLEP:", "(wpisz ID ulepszenia aby kupic)"});
+            u.insert(u.end(), {"SKLEP:", "(wpisz ID ulepszenia aby kupic)", separator});
             for (const auto ulep : this->mozliweUlepszenia) {
                 if (!this->player->maUlepszenie(ulep->getId())) {
                     string xx(to_string(ulep->getId()) + " ($" + to_string(ulep->getCost()) + ") - " + ulep->getOpis());
@@ -309,10 +308,9 @@ void Game::Draw() {
                 this->outOfRangeError = false;
                 u.insert(u.end(), {separator, "ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
             }
-            u.insert(u.end(), {"Wpisz powrot(p) aby wyjsc", separator});
             break;
         case EQ:
-            u.insert(u.end(), {"KUPIONE ULEPSZENIA:", "Wpisz ID ulepszenia aby wylaczyc/wlaczyc"});
+            u.insert(u.end(), {"KUPIONE ULEPSZENIA:", "Wpisz ID ulepszenia aby wylaczyc/wlaczyc", separator});
             for (const auto ulep : this->player->getUlepszenia()) {
                 u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
             }
@@ -325,7 +323,6 @@ void Game::Draw() {
                 this->outOfRangeError = false;
                 u.insert(u.end(), {separator, "NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!", separator});
             }
-            u.insert(u.end(), {"Wpisz powrot(p) aby wyjsc", separator});
             break;
         case MAIN:
             u.insert(u.end(), {"KUP (b) - wejdz do sklepu", "EQ (e) - zarzadzaj ulepszeniami", separator});
@@ -395,3 +392,8 @@ int PodwojnePieniadze1::use(Game *g, string s) {
     return g->player->calculateBaseMoney(s);
 }
 void PodwojnePieniadze1::buy(Game *g) {}
+
+UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
+std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
+int UzycieSlowaOwoc::use(Game *g, string s) { return 0; }
+void UzycieSlowaOwoc::buy(Game *g) { g->player->addFeedableCharacter("owoc", 15); }

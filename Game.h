@@ -132,4 +132,12 @@ public:
     PodwojnePieniadze1(int cost);
 };
 
+class UzycieSlowaOwoc : public Ulepszenie {
+public:
+    std::string getOpis();
+    void buy(Game *p);
+    int use(Game *p, std::string s);
+    UzycieSlowaOwoc(int cost);
+};
+
 #endif
