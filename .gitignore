@@ -33,5 +33,6 @@
 *.out
 *.app
 
-obj/*
-bin/*
+*Debug*
+*.depend
+*.layout
