@@ -108,22 +108,24 @@ void Player::feedString(string s) {
  */
 void Game::userInput(string s) {
     this->lastInput = s;
-    if (checkCommand("quit", s)) {
+    if (checkCommand("quit", s)|| checkCommand("q", s) ) {
         this->stop();
     }
     switch (this->getState()) {
 
     case GameState::START:
         // What to draw in START
-        if (checkCommand("menu", s)) {
+        if (checkCommand("menu", s)|| checkCommand("m", s) ) {
             this->state = GameState::MENU;
-        } else
+        } else if (checkCommand("autorzy", s) || checkCommand("a" ,s)) {
+            this->state = GameState::AUTORZY;
+        }else
             this->commandNotFoundError = true;
         break;
 
     case GameState::MENU:
         // What to draw in MENU
-        if (checkCommand("powrot", s)) {
+        if (checkCommand("powrot", s) || checkCommand( "p", s)) {
             this->state = GameState::START;
         } else if (checkCommand("start", s)) {
             this->state = GameState::GAME;
@@ -135,7 +137,7 @@ void Game::userInput(string s) {
         // What to draw in GAME
         if (checkCommand("menu", s)) {
             this->state = GameState::MENU;
-        } else if (checkCommand("ulepszenia", s) || checkCommand("ulep", s)) {
+        } else if (checkCommand("ulepszenia", s) || checkCommand("u", s)) {
             this->state = GameState::ULEPSZENIA;
         } else {
             this->player->feedString(s);
@@ -144,15 +146,13 @@ void Game::userInput(string s) {
 
     case GameState::AUTORZY:
           //// What to draw in AUTORZY
-        if (checkCommand("autorzy", s)) {
-            this->state = GameState::AUTORZY;
+         if (checkCommand("powrot", s) || checkCommand("p", s)) {
+            this->state = GameState::START;
         } else
             this->commandNotFoundError = true;
-        break;
 
-    case GameState::KOMENDY:
-         //// What to draw in KOMENDY
-        break;
+            break;
+
     case GameState::ULEPSZENIA:
          //// What to draw in ULEPSZENIA
         switch (this->ulstate) {
@@ -230,7 +230,7 @@ void DrawFromVector(vector<string> v) {
  * */
 void Game::Draw() {
 
-    vector<string> m, s, g, u;
+    vector<string> m, s, g, u, a;
     string lits = "\n";
     string ulepszeniaString = "";
     pair<char, int> chr;
@@ -240,6 +240,7 @@ void Game::Draw() {
         // What to draw in START
         s = {
             separator,
+            "",
             "",
             "                             ____   ___ _____    ____ _     ___ ____ _  _______ ____",
             "                            |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
@@ -251,13 +252,19 @@ void Game::Draw() {
             "",
             "",
             "",
-            "                                                Menu = Menu",
+            "                                             < Menu      [ M ] >",
             "",
-            "                                                Credits = Autorzy",
+            "                                             < Autorzy   [ A ] >",
             "",
-            "                                                Komendy = Help",
+            "                                             < Wyjscie   [ Q ] >",
             "",
-            "                                                Wyjscie = Quit",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "",
             separator};
         if (this->commandNotFoundError) {
@@ -271,6 +278,7 @@ void Game::Draw() {
         m = {
             separator,
             "",
+            "",
             "                                          __  __   ___   _  _   _   _ ",
             "                                         |  \\/  | | __| | \\| | | | | |",
             "                                         | |\\/| | | _|  | .` | | |_| |",
@@ -280,11 +288,20 @@ void Game::Draw() {
             "",
             "",
             "",
-            "                                          Zacznij zarabiac = Start",
+            "                                         < Start Game [ S ] >",
             "",
-            "                                          Powrot = Powrot",
+            "                                         < Powrot [ P ] >",
             "",
-            "                                          Wyjscie = Quit",
+            "                                         < Wyjscie [ Q ] >",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "",
             separator};
         if (this->commandNotFoundError) {
@@ -293,7 +310,39 @@ void Game::Draw() {
         }
         DrawFromVector(m);
         break;
-    case GAME:
+    case AUTORZY:
+        a = {
+        separator,
+        "",
+        "",
+        "                                    ___   __  ____________  ____  _______  __",
+        "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
+        "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
+        "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
+        "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "                                   Marcin Majewski = Glowny Programista",
+        "",
+        "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
+        "",
+        "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
+        "",
+        "                                   Krystian Sokolowski = Beater i Poprawa bledow",
+        "",
+        "                                   Szymon Sloniowski = Interfejs Gry",
+        "",
+        "",
+        "",
+        "",
+        " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
+separator};
+DrawFromVector(a);
+        break;
+        case GAME:
         // What to draw in GAME
         for (pair<string, int> chr : this->player->getCharacters()) {
             lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
@@ -356,47 +405,12 @@ void Game::Draw() {
         u.insert(u.end(), {"Wpisz powrot(p) aby wyjsc", separator});
         DrawFromVector(u);
         break;
-    case AUTORZY:
-        a = {
-        separator,
-        "",
-        "",
-        "                            ___   __  ____________  ____  _______  __
-                                   /   | / / / /_  __/ __ \/ __ \/__  /\ \/ /
-                                  / /| |/ / / / / / / / / / /_/ /  / /  \  /
-                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /
-                                /_/  |_\____/ /_/  \____/_/ |_|  /____//_/
-
-
-
-
-
-                                      ////////// = Marcin Majewski
-
-                                      ////////// = Karol Sa³aciñski
-
-                                      ////////// = Maciej Gawin
-
-                                      ////////// = Krystian Soko³owski
-
-                                      ///////// = Szymon S³oniowski
-
-
-
-
-
-
- Powrot = Powrot                             < Wyjscie = Quit >                             Komendy = Help
-
-
-separator
-        }
-
     default:
         // grrrr, error
         cout << "Something went wrong!";
         this->stop();
         break;
+
     }
 }
 
