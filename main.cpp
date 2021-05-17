@@ -15,8 +15,8 @@ int main() {
     /* Game loop, nie tykac!! */
     Game *g = new Game();
     while (g->isRunning() == true) {
-        //system("cls");
-        system("clear");
+        system("cls");
+        //system("clear");
         g->Draw();
         string s;
         getline(cin, s);

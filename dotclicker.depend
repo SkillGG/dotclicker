@@ -8,18 +8,24 @@
 	<thread>
 	<string>
 
-1621252645 source:g:\git\nowy folder\dotclicker\game.cpp
+1621280357 source:g:\git\nowy folder\dotclicker\game.cpp
 	"Game.h"
+	<algorithm>
 	<iostream>
-	<string>
-	<thread>
-
-1621251473 g:\git\nowy folder\dotclicker\game.h
+	<map>
+	<stdio.h>
+	<stdlib.h>
 	<string>
 	<thread>
 	<vector>
 
-1621250084 source:g:\git\nowy folder\dotclicker\main.cpp
+1621279529 g:\git\nowy folder\dotclicker\game.h
+	<map>
+	<string>
+	<thread>
+	<vector>
+
+1621276855 source:g:\git\nowy folder\dotclicker\main.cpp
 	"Game.h"
 	<iostream>
 	<stdio.h>
