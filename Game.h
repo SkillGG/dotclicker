@@ -9,9 +9,11 @@
  * Stany, w jakich gra moze byc
  */
 enum GameState {
+    AUTORZY = 3,
     GAME = 2,
     MENU = 1,
     START = 0
+
 };
 
 // tzw. forward-reference, nie tykac

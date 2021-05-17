@@ -9,6 +9,7 @@ Player::Player(Game *g) {
     this->money = 0;
     this->Gra = g;
     this->ulepszenia = {};
+
 }
 
 int Ulepszenie::getId() { return this->id; }
@@ -33,7 +34,7 @@ Game::Game() {
     // lista mozliwych ulepszen
     this->mozliweUlepszenia = {(Ulepszenie *)(new PodwojnePieniadze1(100))};
 
-    this->state = GameState::MENU;
+    this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
 }
@@ -56,6 +57,9 @@ void Game::userInput(string s) {
     switch (this->getState()) {
     case GameState::START:
         // What to draw in START
+        if (s == "menu" || s == "MENU") {
+        this->state = GameState::MENU;
+        }
         break;
     case GameState::MENU:
         // What to draw in MENU
@@ -81,13 +85,37 @@ void DrawFromVector(vector<string> v) {
  * */
 void Game::Draw() {
     vector<string> m;
+    vector<string> s;
     switch (this->getState()) {
     case START:
-        // What to draw in START
+         // What to draw in START
+        s = {
+"==============================================================================================================",
+"",
+"                             ____   ___ _____    ____ _     ___ ____ _  _______ ____",
+"                            |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
+"                            | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
+"                            | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
+"                            |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
+"",
+"",
+"",
+"",
+"",
+"                                                Menu = Menu*",
+"",
+"                                                Credits = Autorzy*",
+"",
+"                                                Komendy = Help*",
+"",
+"                                                Wyjscie = Quit*",
+"",
+"=============================================================================================================="};
+        DrawFromVector(s);
         break;
     case MENU:
         // What to draw in MENU
-        m = {
+        m  = {
             "=======================================================",
             "",
             "              __  __   ___   _  _   _   _ ",
@@ -97,9 +125,11 @@ void Game::Draw() {
             "",
             "",
             "",
-            "                  Zacznij zarabiac = 3*",
+            "                  Zacznij zarabiac = START*",
             "",
             "                  Ulepszenia = Ulepsz*",
+            "",
+            "                  Powrot = Powrot*",
             "",
             "                  Wyjscie = q",
             "",
