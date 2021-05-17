@@ -33,6 +33,6 @@
 *.out
 *.app
 
-*Debug*
+*/Debug/*
 *.depend
 *.layout
