@@ -42,7 +42,7 @@ Game::Game() {
 
     // lista mozliwych ulepszen
     this->mozliweUlepszenia = {(Ulepszenie *)(new PodwojnePieniadze1(100))};
-
+    this->commandNotFoundError = false;
     this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
@@ -68,13 +68,15 @@ void Game::userInput(string s) {
         // What to draw in START
         if (checkCommand("menu", s)) {
             this->state = GameState::MENU;
-        }
+        } else
+            this->commandNotFoundError = true;
         break;
     case GameState::MENU:
         // What to draw in MENU
         if (checkCommand("powrot", s)) {
             this->state = GameState::START;
-        }
+        } else
+            this->commandNotFoundError = true;
         break;
     case GameState::GAME:
         // What to draw in GAME
@@ -126,6 +128,11 @@ void Game::Draw() {
             "                                                Wyjscie = Quit",
             "",
             "=============================================================================================================="};
+        if (this->commandNotFoundError) {
+            this->commandNotFoundError = false;
+            s.push_back("Nie znaleziono komendy!");
+            s.push_back("==============================================================================================================");
+        }
         DrawFromVector(s);
         break;
     case MENU:
@@ -153,6 +160,11 @@ void Game::Draw() {
             "                                          Wyjscie = Quit",
             "",
             "=============================================================================================================="};
+        if (this->commandNotFoundError) {
+            this->commandNotFoundError = false;
+            m.push_back("Nie znaleziono komendy!");
+            m.push_back("==============================================================================================================");
+        }
         DrawFromVector(m);
         break;
     case GAME:
