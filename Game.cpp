@@ -51,22 +51,28 @@ GameState Game::getState() { return this->state; }
  */
 void Game::userInput(string s) {
     this->lastInput = s;
-    if (s == "q" || s == "Q") {
+    if (s == "quit" || s == "Quit") {
         this->stop();
     }
     switch (this->getState()) {
     case GameState::START:
         // What to draw in START
-        if (s == "menu" || s == "MENU") {
+        if (s == "menu" || s == "Menu") {
         this->state = GameState::MENU;
         }
         break;
     case GameState::MENU:
         // What to draw in MENU
+        if (s == "Powrot" || s == "powrot"){
+            this->state = GameState::START;
+        }
         break;
     case GameState::GAME:
         // What to draw in GAME
         break;
+    case GameState::AUTORZY:
+        //// What to draw in GAME
+         break;
     default:
         cout << "Something went wrong!";
         break;
@@ -102,13 +108,13 @@ void Game::Draw() {
 "",
 "",
 "",
-"                                                Menu = Menu*",
+"                                                Menu = Menu",
 "",
-"                                                Credits = Autorzy*",
+"                                                Credits = Autorzy",
 "",
-"                                                Komendy = Help*",
+"                                                Komendy = Help",
 "",
-"                                                Wyjscie = Quit*",
+"                                                Wyjscie = Quit",
 "",
 "=============================================================================================================="};
         DrawFromVector(s);
@@ -116,24 +122,28 @@ void Game::Draw() {
     case MENU:
         // What to draw in MENU
         m  = {
-            "=======================================================",
+            "==============================================================================================================",
             "",
-            "              __  __   ___   _  _   _   _ ",
-            "             |  \\/  | | __| | \\| | | | | |",
-            "             | |\\/| | | _|  | .` | | |_| |",
-            "             |_|  |_| |___| |_|\\_|  \\___/",
+            "                                          __  __   ___   _  _   _   _ ",
+            "                                         |  \\/  | | __| | \\| | | | | |",
+            "                                         | |\\/| | | _|  | .` | | |_| |",
+            "                                         |_|  |_| |___| |_|\\_|  \\___/",
             "",
             "",
             "",
-            "                  Zacznij zarabiac = START*",
             "",
-            "                  Ulepszenia = Ulepsz*",
             "",
-            "                  Powrot = Powrot*",
             "",
-            "                  Wyjscie = q",
             "",
-            "======================================================="};
+            "                                          Zacznij zarabiac = Start",
+            "",
+            "                                          Ulepszenia = Ulepsz",
+            "",
+            "                                          Powrot = Powrot",
+            "",
+            "                                          Wyjscie = Quit",
+            "",
+            "=============================================================================================================="};
         DrawFromVector(m);
         break;
     case GAME:
