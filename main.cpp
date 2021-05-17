@@ -15,7 +15,7 @@ int main() {
     /* Game loop, nie tykac!! */
     Game *g = new Game();
     while (g->isRunning() == true) {
-        system("cls");
+        //system("cls");
         system("clear");
         g->Draw();
         string s;

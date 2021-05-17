@@ -8,3 +8,21 @@
 	<thread>
 	<string>
 
+1621252645 source:g:\git\nowy folder\dotclicker\game.cpp
+	"Game.h"
+	<iostream>
+	<string>
+	<thread>
+
+1621251473 g:\git\nowy folder\dotclicker\game.h
+	<string>
+	<thread>
+	<vector>
+
+1621250084 source:g:\git\nowy folder\dotclicker\main.cpp
+	"Game.h"
+	<iostream>
+	<stdio.h>
+	<string>
+	<thread>
+
