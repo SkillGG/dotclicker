@@ -48,13 +48,23 @@ Game::Game() {
         (Ulepszenie *)(new PodwojnePieniadze1(100)),
         (Ulepszenie *)(new UzycieSlowaOwoc(1500))};
     this->commandNotFoundError = false;
+    this->notIntegerError = false;
+    this->outOfRangeError = false;
     this->notEnoughMoneyError = false;
+    this->lastInput = "";
     this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("debug", 10000);
-    this->ulstate=UlepszeniaState::MAIN;
+    this->ulstate = UlepszeniaState::MAIN;
+}
+
+Game::~Game() {
+    delete this->player;
+    for (auto n : this->mozliweUlepszenia) {
+        delete n;
+    }
 }
 
 /** Zatrzymaj gre */
@@ -128,7 +138,7 @@ void Game::userInput(string s) {
         // What to draw in MENU
         if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
-        } else if (checkCommand("start", s) || (checkCommand("s" ,s))) {
+        } else if (checkCommand("start", s) || (checkCommand("s", s))) {
             this->state = GameState::GAME;
         } else
             this->commandNotFoundError = true;
@@ -140,7 +150,7 @@ void Game::userInput(string s) {
             this->state = GameState::MENU;
         } else if (checkCommand("ulepszenia", s) || checkCommand("u", s)) {
             this->state = GameState::ULEPSZENIA;
-            } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
+        } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::MENU;
         } else {
             this->player->feedString(s);
@@ -356,7 +366,7 @@ void Game::Draw() {
             "                                            Ustaw Ulepszenia [ U ]",
             "",
             separator,
-            "                                                /V Literki V\\" , lits + "\n",
+            "                                                /V Literki V\\", lits + "\n",
             "< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
             separator};
         DrawFromVector(g);
