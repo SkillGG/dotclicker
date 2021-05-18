@@ -128,7 +128,7 @@ void Game::userInput(string s) {
         // What to draw in MENU
         if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
-        } else if (checkCommand("start", s)) {
+        } else if (checkCommand("start", s) || (checkCommand("s" ,s))) {
             this->state = GameState::GAME;
         } else
             this->commandNotFoundError = true;
@@ -140,6 +140,8 @@ void Game::userInput(string s) {
             this->state = GameState::MENU;
         } else if (checkCommand("ulepszenia", s) || checkCommand("u", s)) {
             this->state = GameState::ULEPSZENIA;
+            } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
+            this->state = GameState::MENU;
         } else {
             this->player->feedString(s);
         }
@@ -348,9 +350,14 @@ void Game::Draw() {
         }
         g = {
             separator,
-            "Pieniadze: " + to_string(this->player->getMoney()) + "$",
-            "Ulepszenia: " + ulepszeniaString + "(wpisz 'ulepszenia' by otoworzyc menu ulepszen)",
-            "Literki:" + lits,
+            "",
+            "                                                Pieniadze: " + to_string(this->player->getMoney()) + "$",
+            "",
+            "                                            Ustaw Ulepszenia [ U ]",
+            "",
+            separator,
+            "                                                /V Literki V\\" , lits + "\n",
+            "< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
             separator};
         DrawFromVector(g);
         break;
