@@ -50,6 +50,8 @@ public:
     std::vector<Ulepszenie *> getUlepszenia() { return this->ulepszenia; }
     /** Sprawdz czy ma ulepszenie */
     bool maUlepszenie(int uid);
+    /**Usuwa ulepszenie*/
+    void removeUlepszenie(int uid);
     /** Kup Ulepszenie */
     bool kupUlepszenie(int uid);
     /** Zaloz ulepszenie */
@@ -182,5 +184,15 @@ public:
     void equip(Game *p);
     void unequip(Game *p);
     NaszaKlasa(int cost);
+};
+
+class Skrzynka : public Ulepszenie {
+public:
+    std::string getOpis();
+    void buy(Game *p);
+    int use(Game *p, std::string s, unsigned int bm);
+    void equip(Game *p);
+    void unequip(Game *p);
+    Skrzynka(int cost);
 };
 #endif

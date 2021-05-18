@@ -7,6 +7,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 
@@ -33,12 +34,21 @@ Player::Player(Game *g) {
     this->ulepszenia = {};
 }
 
+void Player::removeUlepszenie(int uid){
+    for(size_t i=0; i<this->ulepszenia.size();i++){
+        if(this->ulepszenia.at(i)->getId()==uid){
+            this->ulepszenia.erase(this->ulepszenia.begin()+i);
+        }
+    }
+}
+
 int Ulepszenie::getId() { return this->id; }
 unsigned int Ulepszenie::getCost() { return this->cost; }
 
 Ulepszenie::Ulepszenie(int i, unsigned int c) {
     this->id = i;
     this->cost = c;
+    this->equipped = false;
 }
 
 /** Ustaw domyslne wartosci */
@@ -49,7 +59,8 @@ Game::Game() {
         (Ulepszenie *)(new UzycieSlowaOwoc(1500)),
         (Ulepszenie *)(new Przecinek(200)),
         (Ulepszenie *)(new Nawiasy (750)),
-        (Ulepszenie *)(new NaszaKlasa(1000))
+        (Ulepszenie *)(new NaszaKlasa(1000)),
+        (Ulepszenie *)(new Skrzynka(1000))
         };
     this->commandNotFoundError = false;
     this->notEnoughMoneyError = false;
@@ -59,6 +70,7 @@ Game::Game() {
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("lo", 10000);
     this->ulstate=UlepszeniaState::MAIN;
+    srand (time(NULL));
 }
 
 /** Zatrzymaj gre */
@@ -447,6 +459,7 @@ bool Player::equipUlepszenie(int id) {
     return false;
 }
 
+
 void Player::removeFeedableCharacter(string s) {
     auto it = this->characters.find(s);
     this->characters.erase(it);
@@ -463,14 +476,18 @@ int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
     // dodaj drugie tyle pieniedzy
     return bm;
 }
-void PodwojnePieniadze1::buy(Game *g) {}
+void PodwojnePieniadze1::buy(Game *g) {
+    this->toggleEquip(g);
+}
 void PodwojnePieniadze1::equip(Game *g) {}
 void PodwojnePieniadze1::unequip(Game *g) {}
 
 UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
 std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
 int UzycieSlowaOwoc::use(Game *g, string s, unsigned int bm) { return 0; /* nie dodawaj zadnej kasy */ }
-void UzycieSlowaOwoc::buy(Game *g) {}
+void UzycieSlowaOwoc::buy(Game *g) {
+this->toggleEquip(g);
+}
 void UzycieSlowaOwoc::equip(Game *g) {
     g->player->addFeedableCharacter("owoc", 15);
 }
@@ -481,7 +498,9 @@ void UzycieSlowaOwoc::unequip(Game *g) {
 Przecinek::Przecinek(int cost) : Ulepszenie::Ulepszenie(3, cost) {}
 std::string Przecinek::getOpis() { return "Pozwala na uzycie przecinka"; }
 int Przecinek::use(Game *g, string s, unsigned int bm) { return 0; }
-void Przecinek::buy(Game *g) {}
+void Przecinek::buy(Game *g) {
+this->toggleEquip(g);
+}
 void Przecinek::equip(Game *g) {
     g->player->addFeedableCharacter(",", 5);
 }
@@ -492,7 +511,9 @@ void Przecinek::unequip(Game *g) {
 Nawiasy::Nawiasy(int cost) : Ulepszenie::Ulepszenie(4, cost) {}
 std::string Nawiasy::getOpis() { return "Pozwala na uzycie Nawiasow()"; }
 int Nawiasy::use(Game *g, string s, unsigned int bm) { return 0; }
-void Nawiasy::buy(Game *g) {}
+void Nawiasy::buy(Game *g) {
+this->toggleEquip(g);
+}
 void Nawiasy::equip(Game *g) {
     g->player->addFeedableCharacter("()", 20);
 }
@@ -503,10 +524,39 @@ void Nawiasy::unequip(Game *g) {
 NaszaKlasa::NaszaKlasa(int cost) : Ulepszenie::Ulepszenie(5, cost) {}
 std::string NaszaKlasa::getOpis() { return "Pozwala na uzycie 2tb"; }
 int NaszaKlasa::use(Game *g, string s, unsigned int bm) { return 0; }
-void NaszaKlasa::buy(Game *g) {}
+void NaszaKlasa::buy(Game *g) {
+this->toggleEquip(g);
+}
 void NaszaKlasa::equip(Game *g) {
     g->player->addFeedableCharacter("2tb", 50);
 }
 void NaszaKlasa::unequip(Game *g) {
     g->player->removeFeedableCharacter("2tb");
 }
+
+Skrzynka::Skrzynka(int cost) : Ulepszenie::Ulepszenie(6, cost) {}
+std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem"; }
+int Skrzynka::use(Game *g, string s, unsigned int bm) { return 0; }
+void Skrzynka::buy(Game *g) {
+int drop = rand() %100+1;
+if(drop<35){
+    g->player->addMoney(20);
+
+}else if(drop<65&&drop>=35){
+    g->player->addMoney(500);
+
+} else if(drop<85&&drop>=65){
+    g->player->addMoney(1000);
+
+}else if(drop<95&&drop>=85){
+    g->player->addMoney(2000);
+
+}else  {
+    g->player->addMoney(4000);
+}
+int i=0;
+g->player->removeUlepszenie(this->getId());
+}
+
+void Skrzynka::equip(Game *g) {}
+void Skrzynka::unequip(Game *g) {}
