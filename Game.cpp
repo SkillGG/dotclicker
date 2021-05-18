@@ -183,15 +183,7 @@ void Game::userInput(string s) {
                 this->ulstate = UlepszeniaState::MAIN;
             } else if (isInt(s)) {
                 int sint = atoi(s.c_str());
-                bool jestUl = false;
-                for (Ulepszenie *u : this->player->getUlepszenia()) {
-                    if (u->getId() == sint) {
-                        u->toggleEquip(this);
-                        jestUl = true;
-                        break;
-                    }
-                }
-                if (!jestUl) {
+                if (!this->player->equipUlepszenie(sint)) {
                     this->outOfRangeError = true;
                 }
             } else
@@ -228,7 +220,6 @@ void DrawFromVector(vector<string> v) {
  * Jest to funkcja, ktora ma wyswietlac tekst zaleznie od wybranego stanu
  * */
 void Game::Draw() {
-
     vector<string> m, s, g, u, a;
     string lits = "\n";
     string ulepszeniaString = "";
@@ -444,10 +435,12 @@ bool Player::maUlepszenie(int uid) {
     return false;
 }
 
-void Player::equipUlepszenie(int id) {
+bool Player::equipUlepszenie(int id) {
     if (this->maUlepszenie(id)) {
-        this->ulepszenia.at(id)->toggleEquip(this->Gra);
+        this->Gra->getUlepszenie(id)->toggleEquip(this->Gra);
+        return true;
     }
+    return false;
 }
 
 void Player::removeFeedableCharacter(string s) {
