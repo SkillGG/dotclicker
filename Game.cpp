@@ -54,7 +54,7 @@ Game::Game() {
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("debug", 10000);
-    this->ulstate=UlepszeniaState::MAIN;
+    this->ulstate = UlepszeniaState::MAIN;
 }
 
 /** Zatrzymaj gre */
@@ -128,7 +128,7 @@ void Game::userInput(string s) {
         // What to draw in MENU
         if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
-        } else if (checkCommand("start", s) || (checkCommand("s" ,s))) {
+        } else if (checkCommand("start", s) || (checkCommand("s", s))) {
             this->state = GameState::GAME;
         } else
             this->commandNotFoundError = true;
@@ -140,7 +140,7 @@ void Game::userInput(string s) {
             this->state = GameState::MENU;
         } else if (checkCommand("ulepszenia", s) || checkCommand("u", s)) {
             this->state = GameState::ULEPSZENIA;
-            } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
+        } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::MENU;
         } else {
             this->player->feedString(s);
@@ -235,6 +235,7 @@ void Game::Draw() {
     string lits = "\n";
     string ulepszeniaString = "";
     pair<char, int> chr;
+    int i = 0;
     const string separator = "==============================================================================================================";
     switch (this->getState()) {
     case START:
@@ -347,6 +348,7 @@ void Game::Draw() {
         // What to draw in GAME
         for (pair<string, int> chr : this->player->getCharacters()) {
             lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
+            i++;
         }
         g = {
             separator,
@@ -356,14 +358,16 @@ void Game::Draw() {
             "                                            Ustaw Ulepszenia [ U ]",
             "",
             separator,
-            "                                                /V Literki V\\" , lits + "\n",
-            "< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
-            separator};
+            "                                                /V Literki V\\", lits};
+        while (g.size() < 25 - i)
+            g.insert(g.end(), "");
+        g.insert(g.end(), {"< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
+                           separator});
         DrawFromVector(g);
         break;
     case ULEPSZENIA:
         u = {
-            separator +"\n",
+            separator + "\n",
             "",
             "                         _   _ _      ___________  _____  ______ _____ _   _ _____  ___",
             "                        | | | | |    |  ___| ___ \\/  ___||___  /|  ___| \\ | |_   _|/ _ \\",
@@ -372,68 +376,71 @@ void Game::Draw() {
             "                        | |_| | |____| |___| |    /\\__/ /./ /___| |___| |\\  |_| |_| | | |",
             "                         \\___/\\_____/\\____/\\_|    \\____/ \\_____/\\____/\\_| \\_/\\___/\\_| |_/",
             "",
-            "",
-            separator + "\n",
-            };
-
-
+            ""};
 
         switch (this->ulstate) {
         case KUP:
             u.insert(u.end(), {
-                     "                                                  /\\/SKLEP\\/\\", "                                          Wpisz ID Ulepszenia aby Kupic\n",
-                     });
+                                  "                                                  /\\/SKLEP\\/\\",
+                                  "",
+                              });
             for (const auto ulep : this->mozliweUlepszenia) {
                 if (!this->player->maUlepszenie(ulep->getId())) {
                     string xx(to_string(ulep->getId()) + "  [ $" + to_string(ulep->getCost()) + " ] - " + ulep->getOpis());
                     u.insert(u.end(), xx);
                 }
             }
-            u.insert(u.end(), { "", separator});
-            if (this->notEnoughMoneyError) {
-                this->notEnoughMoneyError = false;
-                u.insert(u.end(), {"                                         ZA MALO PIENIEDZY!", separator});
-            }
-            if (this->notIntegerError) {
-                this->notIntegerError = false;
-                u.insert(u.end(), {"                                         ID ULEPSZENIA POWINNO BYC CYFRA!", separator});
-            }
-            if (this->outOfRangeError) {
-                this->outOfRangeError = false;
-                u.insert(u.end(), {"                                         ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
-            }
+            while (u.size() < 24 - ((this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+                u.insert(u.end(), "");
+            u.insert(u.end(), "                                         Wpisz numer Ulepszenia aby Kupic");
             break;
         case EQ:
-            u.insert(u.end(), {"                                                  /\\/EKWIPUNEK\\/\\", "                                      Wpisz ID Ulepszenia aby Wylaczyc/Wlaczyc", separator});
+            u.insert(u.end(), {"                                                  /\\/EKWIPUNEK\\/\\", ""});
             for (const auto ulep : this->player->getUlepszenia()) {
                 u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
             }
-            u.insert(u.end(), {"", separator});
-            if (this->notIntegerError) {
-                this->notIntegerError = false;
-                u.insert(u.end(), {separator, "ID ULEPSZENIA POWINNO BYC NUMEREM!", separator});
-            }
-            if (this->outOfRangeError) {
-                this->outOfRangeError = false;
-                u.insert(u.end(), {separator, "NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!", separator});
-            }
+            while (u.size() < 24 - ((this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+                u.insert(u.end(), "");
+            u.insert(u.end(), "                                   Wpisz numer Ulepszenia aby Wlaczyc lub wylaczyc");
             break;
         case MAIN:
-            u.insert(u.end(), {
-                     "                                             < Kup Ulepszenia [ B ] > \n", "                                               < Ekwipunek [ E ] >\n",
-                     "",
-                     "",
-                     "",
-                     "",
-                     "",
-                     "",
-                     "",
-                     ""});
+            u.insert(u.end(), {"                                             < Kup Ulepszenia [ B ] > \n", "                                               < Ekwipunek [ E ] >\n",
+                               "",
+                               "",
+                               "",
+                               "",
+                               "",
+                               "",
+                               "",
+                               "",
+                               "",
+                               "",
+                               ""});
             break;
         default:
             cout << (int)this->ulstate;
         }
         u.insert(u.end(), {" < Powrot [ P ] >                                                                          < Wyjscie [ Q ] >", separator});
+        if (this->notEnoughMoneyError) {
+            this->notEnoughMoneyError = false;
+            u.insert(u.end(), {"                                               ZA MALO PIENIEDZY!", separator});
+        }
+        if (this->notIntegerError && this->ulstate == UlepszeniaState::KUP) {
+            this->notIntegerError = false;
+            u.insert(u.end(), {"                                         ID ULEPSZENIA POWINNO BYC CYFRA!", separator});
+        }
+        if (this->outOfRangeError && this->ulstate == UlepszeniaState::KUP) {
+            this->outOfRangeError = false;
+            u.insert(u.end(), {"                                         ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
+        }
+        if (this->notIntegerError && this->ulstate == UlepszeniaState::EQ) {
+            this->notIntegerError = false;
+            u.insert(u.end(), {"                                         ID ULEPSZENIA POWINNO BYC NUMEREM!", separator});
+        }
+        if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
+            this->outOfRangeError = false;
+            u.insert(u.end(), {"                                       NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!", separator});
+        }
         DrawFromVector(u);
         break;
     default:

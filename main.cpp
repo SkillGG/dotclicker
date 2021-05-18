@@ -16,7 +16,7 @@ int main() {
     Game *g = new Game();
     while (g->isRunning() == true) {
         system("cls");
-        //system("clear");
+        system("clear");
         g->Draw();
         string s;
         getline(cin, s);
