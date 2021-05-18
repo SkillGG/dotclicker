@@ -34,9 +34,9 @@ Player::Player(Game *g) {
 }
 
 int Ulepszenie::getId() { return this->id; }
-int Ulepszenie::getCost() { return this->cost; }
+unsigned int Ulepszenie::getCost() { return this->cost; }
 
-Ulepszenie::Ulepszenie(int i, int c) {
+Ulepszenie::Ulepszenie(int i, unsigned int c) {
     this->id = i;
     this->cost = c;
 }
@@ -54,6 +54,7 @@ Game::Game() {
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("debug", 10000);
+    this->ulstate=UlepszeniaState::MAIN;
 }
 
 /** Zatrzymaj gre */
@@ -108,24 +109,24 @@ void Player::feedString(string s) {
  */
 void Game::userInput(string s) {
     this->lastInput = s;
-    if (checkCommand("quit", s)|| checkCommand("q", s) ) {
+    if (checkCommand("quit", s) || checkCommand("q", s)) {
         this->stop();
     }
     switch (this->getState()) {
 
     case GameState::START:
         // What to draw in START
-        if (checkCommand("menu", s)|| checkCommand("m", s) ) {
+        if (checkCommand("menu", s) || checkCommand("m", s)) {
             this->state = GameState::MENU;
-        } else if (checkCommand("autorzy", s) || checkCommand("a" ,s)) {
+        } else if (checkCommand("autorzy", s) || checkCommand("a", s)) {
             this->state = GameState::AUTORZY;
-        }else
+        } else
             this->commandNotFoundError = true;
         break;
 
     case GameState::MENU:
         // What to draw in MENU
-        if (checkCommand("powrot", s) || checkCommand( "p", s)) {
+        if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
         } else if (checkCommand("start", s)) {
             this->state = GameState::GAME;
@@ -143,18 +144,16 @@ void Game::userInput(string s) {
             this->player->feedString(s);
         }
         break;
-
     case GameState::AUTORZY:
-          //// What to draw in AUTORZY
-         if (checkCommand("powrot", s) || checkCommand("p", s)) {
+        //// What to draw in AUTORZY
+        if (checkCommand("powrot", s) || checkCommand("p", s)) {
             this->state = GameState::START;
-        } else
+        } else {
             this->commandNotFoundError = true;
-
-            break;
-
+        }
+        break;
     case GameState::ULEPSZENIA:
-         //// What to draw in ULEPSZENIA
+        //// What to draw in ULEPSZENIA
         switch (this->ulstate) {
         case KUP:
             if (checkCommand("p", s) || checkCommand("powrot", s)) {
@@ -187,7 +186,7 @@ void Game::userInput(string s) {
                 bool jestUl = false;
                 for (Ulepszenie *u : this->player->getUlepszenia()) {
                     if (u->getId() == sint) {
-                        u->toggleEquip();
+                        u->toggleEquip(this);
                         jestUl = true;
                         break;
                     }
@@ -269,7 +268,7 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"", "Nie znaleziono komendy!","", separator});
+            u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
         }
         DrawFromVector(s);
         break;
@@ -306,43 +305,43 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"","Nie znaleziono komendy!","", separator});
+            u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
         }
         DrawFromVector(m);
         break;
     case AUTORZY:
         a = {
-        separator,
-        "",
-        "",
-        "                                    ___   __  ____________  ____  _______  __",
-        "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
-        "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
-        "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
-        "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "                                   Marcin Majewski = Glowny Programista",
-        "",
-        "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
-        "",
-        "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
-        "",
-        "                                   Krystian Sokolowski = Beater i Poprawa bledow",
-        "",
-        "                                   Szymon Sloniowski = Interfejs Gry",
-        "",
-        "",
-        "",
-        "",
-        " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
-separator};
-DrawFromVector(a);
+            separator,
+            "",
+            "",
+            "                                    ___   __  ____________  ____  _______  __",
+            "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
+            "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
+            "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
+            "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "                                   Marcin Majewski = Glowny Programista",
+            "",
+            "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
+            "",
+            "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
+            "",
+            "                                   Krystian Sokolowski = Beater i Poprawa bledow",
+            "",
+            "                                   Szymon Sloniowski = Interfejs Gry",
+            "",
+            "",
+            "",
+            "",
+            " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
+            separator};
+        DrawFromVector(a);
         break;
-        case GAME:
+    case GAME:
         // What to draw in GAME
         for (pair<string, int> chr : this->player->getCharacters()) {
             lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
@@ -401,6 +400,8 @@ DrawFromVector(a);
         case MAIN:
             u.insert(u.end(), {"KUP (b) - wejdz do sklepu", "EQ (e) - zarzadzaj ulepszeniami", separator});
             break;
+        default:
+            cout << (int)this->ulstate;
         }
         u.insert(u.end(), {"Wpisz powrot(p) aby wyjsc", separator});
         DrawFromVector(u);
@@ -410,7 +411,6 @@ DrawFromVector(a);
         cout << "Something went wrong!";
         this->stop();
         break;
-
     }
 }
 
@@ -424,7 +424,7 @@ bool Player::kupUlepszenie(int uid) {
         this->money -= u->getCost();
         this->ulepszenia.insert(this->ulepszenia.end(), u);
         u->buy(this->Gra);
-
+        u->equip(this->Gra);
         return true;
     } else
         return false;
@@ -446,10 +446,14 @@ bool Player::maUlepszenie(int uid) {
 
 void Player::equipUlepszenie(int id) {
     if (this->maUlepszenie(id)) {
-        this->ulepszenia.at(id)->toggleEquip();
+        this->ulepszenia.at(id)->toggleEquip(this->Gra);
     }
 }
 
+void Player::removeFeedableCharacter(string s) {
+    auto it = this->characters.find(s);
+    this->characters.erase(it);
+}
 void Player::addFeedableCharacter(string c, int i) { this->characters.insert(pair<string, int>(c, i)); }
 map<string, int> Player::getCharacters() { return this->characters; }
 
@@ -462,14 +466,17 @@ int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
     // dodaj drugie tyle pieniedzy
     return bm;
 }
-void PodwojnePieniadze1::buy(Game *g) {
-    this->toggleEquip();
-}
+void PodwojnePieniadze1::buy(Game *g) {}
+void PodwojnePieniadze1::equip(Game *g) {}
+void PodwojnePieniadze1::unequip(Game *g) {}
 
 UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
 std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
 int UzycieSlowaOwoc::use(Game *g, string s, unsigned int bm) { return 0; /* nie dodawaj zadnej kasy */ }
-void UzycieSlowaOwoc::buy(Game *g) {
-    this->toggleEquip();
+void UzycieSlowaOwoc::buy(Game *g) {}
+void UzycieSlowaOwoc::equip(Game *g) {
     g->player->addFeedableCharacter("owoc", 15);
+}
+void UzycieSlowaOwoc::unequip(Game *g) {
+    g->player->removeFeedableCharacter("owoc");
 }

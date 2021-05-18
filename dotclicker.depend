@@ -32,3 +32,27 @@
 	<string>
 	<thread>
 
+1621285067 source:d:\dotclicker\dotclicker\game.cpp
+	"Game.h"
+	<algorithm>
+	<iostream>
+	<map>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+	<thread>
+	<vector>
+
+1621285421 d:\dotclicker\dotclicker\game.h
+	<map>
+	<string>
+	<thread>
+	<vector>
+
+1621285089 source:d:\dotclicker\dotclicker\main.cpp
+	"Game.h"
+	<iostream>
+	<stdio.h>
+	<string>
+	<thread>
+
