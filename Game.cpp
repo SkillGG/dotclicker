@@ -116,32 +116,21 @@ void Game::userInput(string s) {
 
     case GameState::START:
         // What to draw in START
-        if (checkCommand("menu", s) || checkCommand("m", s)) {
-            this->state = GameState::MENU;
-        } else if (checkCommand("autorzy", s) || checkCommand("a", s)) {
+        if (checkCommand("autorzy", s) || checkCommand("a", s)) {
             this->state = GameState::AUTORZY;
-        } else
-            this->commandNotFoundError = true;
-        break;
-
-    case GameState::MENU:
-        // What to draw in MENU
-        if (checkCommand("powrot", s) || checkCommand("p", s)) {
-            this->state = GameState::START;
-        } else if (checkCommand("start", s) || (checkCommand("s", s))) {
+        }   else if (checkCommand("start", s) || (checkCommand("s", s))) {
             this->state = GameState::GAME;
         } else
             this->commandNotFoundError = true;
         break;
-
     case GameState::GAME:
         // What to draw in GAME
         if (checkCommand("menu", s)) {
-            this->state = GameState::MENU;
+            this->state = GameState::START;
         } else if (checkCommand("ulepszenia", s) || checkCommand("u", s)) {
             this->state = GameState::ULEPSZENIA;
         } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
-            this->state = GameState::MENU;
+            this->state = GameState::START;
         } else {
             this->player->feedString(s);
         }
@@ -231,7 +220,7 @@ void DrawFromVector(vector<string> v) {
  * */
 void Game::Draw() {
 
-    vector<string> m, s, g, u, a;
+    vector<string> s, g, u, a;
     string lits = "\n";
     string ulepszeniaString = "";
     pair<char, int> chr;
@@ -244,21 +233,21 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                             ____   ___ _____    ____ _     ___ ____ _  _______ ____",
-            "                            |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
-            "                            | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
-            "                            | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
-            "                            |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
+            "                           ____   ___ _____    ____ _     ___ ____ _  _______ ____",
+            "                          |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
+            "                          | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
+            "                          | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
+            "                          |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
             "",
             "",
             "",
             "",
-            "",
-            "                                             < Menu      [ M ] >",
+            "                                             < Start Game [ S ] >",
             "",
             "                                             < Autorzy   [ A ] >",
             "",
             "                                             < Wyjscie   [ Q ] >",
+            "",
             "",
             "",
             "",
@@ -274,43 +263,6 @@ void Game::Draw() {
             u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
         }
         DrawFromVector(s);
-        break;
-    case MENU:
-        // What to draw in MENU
-        m = {
-            separator,
-            "",
-            "",
-            "                                          __  __   ___   _  _   _   _ ",
-            "                                         |  \\/  | | __| | \\| | | | | |",
-            "                                         | |\\/| | | _|  | .` | | |_| |",
-            "                                         |_|  |_| |___| |_|\\_|  \\___/",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "                                         < Start Game [ S ] >",
-            "",
-            "                                         < Powrot [ P ] >",
-            "",
-            "                                         < Wyjscie [ Q ] >",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            separator};
-        if (this->commandNotFoundError) {
-            this->commandNotFoundError = false;
-            u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
-        }
-        DrawFromVector(m);
         break;
     case AUTORZY:
         a = {
@@ -358,7 +310,7 @@ void Game::Draw() {
             "                                            Ustaw Ulepszenia [ U ]",
             "",
             separator,
-            "                                                /V Literki V\\", lits};
+            "                                             // Dostepne Slowa \\\\", lits};
         while (g.size() < 25 - i)
             g.insert(g.end(), "");
         g.insert(g.end(), {"< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
@@ -401,11 +353,11 @@ void Game::Draw() {
             }
             while (u.size() < 24 - ((this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
-            u.insert(u.end(), "                                   Wpisz numer Ulepszenia aby Wlaczyc lub wylaczyc");
+            u.insert(u.end(), "                                   Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc");
             break;
         case MAIN:
-            u.insert(u.end(), {"                                             < Kup Ulepszenia [ B ] > \n", "                                               < Ekwipunek [ E ] >\n",
-                               "",
+            u.insert(u.end(), {"",
+                     "                                             < Kup Ulepszenia [ B ] > \n", "                                               < Ekwipunek [ E ] >\n",
                                "",
                                "",
                                "",

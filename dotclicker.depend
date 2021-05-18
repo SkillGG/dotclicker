@@ -8,7 +8,7 @@
 	<thread>
 	<string>
 
-1621328953 source:g:\git\nowy folder\dotclicker\game.cpp
+1621332979 source:g:\git\nowy folder\dotclicker\game.cpp
 	"Game.h"
 	<algorithm>
 	<iostream>
@@ -19,13 +19,13 @@
 	<thread>
 	<vector>
 
-1621320754 g:\git\nowy folder\dotclicker\game.h
+1621333772 g:\git\nowy folder\dotclicker\game.h
 	<map>
 	<string>
 	<thread>
 	<vector>
 
-1621276855 source:g:\git\nowy folder\dotclicker\main.cpp
+1621333070 source:g:\git\nowy folder\dotclicker\main.cpp
 	"Game.h"
 	<iostream>
 	<stdio.h>

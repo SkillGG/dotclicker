@@ -13,7 +13,6 @@ enum GameState {
     ULEPSZENIA = 4,
     AUTORZY = 3,
     GAME = 2,
-    MENU = 1,
     START = 0
 };
 
