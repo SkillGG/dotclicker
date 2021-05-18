@@ -46,14 +46,18 @@ Game::Game() {
     // lista mozliwych ulepszen
     this->mozliweUlepszenia = {
         (Ulepszenie *)(new PodwojnePieniadze1(100)),
-        (Ulepszenie *)(new UzycieSlowaOwoc(1500))};
+        (Ulepszenie *)(new UzycieSlowaOwoc(1500)),
+        (Ulepszenie *)(new Przecinek(200)),
+        (Ulepszenie *)(new Nawiasy (750)),
+        (Ulepszenie *)(new NaszaKlasa(1000))
+        };
     this->commandNotFoundError = false;
     this->notEnoughMoneyError = false;
     this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
-    this->player->addFeedableCharacter("debug", 10000);
+    this->player->addFeedableCharacter("lo", 10000);
     this->ulstate=UlepszeniaState::MAIN;
 }
 
@@ -472,4 +476,37 @@ void UzycieSlowaOwoc::equip(Game *g) {
 }
 void UzycieSlowaOwoc::unequip(Game *g) {
     g->player->removeFeedableCharacter("owoc");
+}
+
+Przecinek::Przecinek(int cost) : Ulepszenie::Ulepszenie(3, cost) {}
+std::string Przecinek::getOpis() { return "Pozwala na uzycie przecinka"; }
+int Przecinek::use(Game *g, string s, unsigned int bm) { return 0; }
+void Przecinek::buy(Game *g) {}
+void Przecinek::equip(Game *g) {
+    g->player->addFeedableCharacter(",", 5);
+}
+void Przecinek::unequip(Game *g) {
+    g->player->removeFeedableCharacter(",");
+}
+
+Nawiasy::Nawiasy(int cost) : Ulepszenie::Ulepszenie(4, cost) {}
+std::string Nawiasy::getOpis() { return "Pozwala na uzycie Nawiasow()"; }
+int Nawiasy::use(Game *g, string s, unsigned int bm) { return 0; }
+void Nawiasy::buy(Game *g) {}
+void Nawiasy::equip(Game *g) {
+    g->player->addFeedableCharacter("()", 20);
+}
+void Nawiasy::unequip(Game *g) {
+    g->player->removeFeedableCharacter("()");
+}
+
+NaszaKlasa::NaszaKlasa(int cost) : Ulepszenie::Ulepszenie(5, cost) {}
+std::string NaszaKlasa::getOpis() { return "Pozwala na uzycie 2tb"; }
+int NaszaKlasa::use(Game *g, string s, unsigned int bm) { return 0; }
+void NaszaKlasa::buy(Game *g) {}
+void NaszaKlasa::equip(Game *g) {
+    g->player->addFeedableCharacter("2tb", 50);
+}
+void NaszaKlasa::unequip(Game *g) {
+    g->player->removeFeedableCharacter("2tb");
 }
