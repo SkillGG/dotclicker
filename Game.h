@@ -53,7 +53,7 @@ public:
     /** Kup Ulepszenie */
     bool kupUlepszenie(int uid);
     /** Zaloz ulepszenie */
-    void equipUlepszenie(int uid);
+    bool equipUlepszenie(int uid);
     /** Usun string do wpisania */
     void removeFeedableCharacter(std::string c);
     /** Dodaj znak, do wpisania */
