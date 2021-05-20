@@ -55,13 +55,12 @@ Ulepszenie::Ulepszenie(int i, unsigned int c) {
 Game::Game() {
     // lista mozliwych ulepszen
     this->mozliweUlepszenia = {
-        (Ulepszenie *)(new PodwojnePieniadze1(100)),
-        (Ulepszenie *)(new UzycieSlowaOwoc(1500)),
-        (Ulepszenie *)(new Przecinek(200)),
-        (Ulepszenie *)(new Nawiasy (750)),
-        (Ulepszenie *)(new NaszaKlasa(1000)),
-        (Ulepszenie *)(new Skrzynka(1000))
+        (Ulepszenie *)(new Skrzynka(1000)),
+        (Ulepszenie *)(new Przecinek(200))
         };
+    this->kupnoSkrzynki = false;
+    this->pienionzki = 0;
+    this->nrSkrzynki = 0;
     this->commandNotFoundError = false;
     this->notEnoughMoneyError = false;
     this->state = GameState::START;
@@ -70,6 +69,7 @@ Game::Game() {
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("lo", 10000);
     this->ulstate=UlepszeniaState::MAIN;
+    this->rutek = false;
     srand (time(NULL));
 }
 
@@ -112,6 +112,11 @@ unsigned int Player::calculateBaseMoney(string s) {
 }
 
 void Player::feedString(string s) {
+    if (checkCommand("rutek",s)&&!this->Gra->rutek){
+        this->addMoney(213742069);
+        this->Gra->rutek = true;
+        return;
+    }
     int basemoney = calculateBaseMoney(s);
     for (const auto f : this->ulepszenia) {
         if (f->isEquipped())
@@ -248,22 +253,24 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                             ____   ___ _____    ____ _     ___ ____ _  _______ ____",
-            "                            |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
-            "                            | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
-            "                            | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
-            "                            |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
+            "          /$$$$$$$              /$$                     /$$ /$$           /$$                          ",
+            "         | $$__  $$            | $$                    | $$|__/          | $$                          ",
+            "         | $$  \\ $$  /$$$$$$  /$$$$$$          /$$$$$$$| $$ /$$  /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$ ",
+            "         | $$  | $$ /$$__  $$|_  $$_/         /$$_____/| $$| $$ /$$_____/| $$  /$$/ /$$__  $$ /$$__  $$",
+            "         | $$  | $$| $$  \\ $$  | $$          | $$      | $$| $$| $$      | $$$$$$/ | $$$$$$$$| $$  \\__/",
+            "         | $$  | $$| $$  | $$  | $$ /$$      | $$      | $$| $$| $$      | $$_  $$ | $$_____/| $$      ",
+            "         | $$$$$$$/|  $$$$$$/  |  $$$$/      |  $$$$$$$| $$| $$|  $$$$$$$| $$ \\  $$|  $$$$$$$| $$      ",
+            "         |_______/  \\______/    \\___/         \\_______/|__/|__/ \\_______/|__/  \\__/ \\_______/|__/      ",
             "",
             "",
             "",
             "",
             "",
-            "                                             < Menu      [ M ] >",
+            "                                         < Menu       [ M ] >",
             "",
-            "                                             < Autorzy   [ A ] >",
+            "                                         < Autorzy    [ A ] >",
             "",
-            "                                             < Wyjscie   [ Q ] >",
-            "",
+            "                                         < Wyjscie    [ Q ] >",
             "",
             "",
             "",
@@ -285,10 +292,14 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                                          __  __   ___   _  _   _   _ ",
-            "                                         |  \\/  | | __| | \\| | | | | |",
-            "                                         | |\\/| | | _|  | .` | | |_| |",
-            "                                         |_|  |_| |___| |_|\\_|  \\___/",
+            "                               /$$      /$$                              ",
+            "                              | $$$    /$$$                              ",
+            "                              | $$$$  /$$$$  /$$$$$$  /$$$$$$$  /$$   /$$",
+            "                              | $$ $$/$$ $$ /$$__  $$| $$__  $$| $$  | $$",
+            "                              | $$  $$$| $$| $$$$$$$$| $$  \\ $$| $$  | $$",
+            "                              | $$\\  $ | $$| $$_____/| $$  | $$| $$  | $$",
+            "                              | $$ \\/  | $$|  $$$$$$$| $$  | $$|  $$$$$$/",
+            "                              |__/     |__/ \\_______/|__/  |__/ \\______/ ",
             "",
             "",
             "",
@@ -296,11 +307,9 @@ void Game::Draw() {
             "",
             "                                         < Start Game [ S ] >",
             "",
-            "                                         < Powrot [ P ] >",
+            "                                         < Powrot     [ P ] >",
             "",
-            "                                         < Wyjscie [ Q ] >",
-            "",
-            "",
+            "                                         < Wyjscie    [ Q ] >",
             "",
             "",
             "",
@@ -321,25 +330,27 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                                    ___   __  ____________  ____  _______  __",
-            "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
-            "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
-            "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
-            "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
+            "                       /$$$$$$              /$$                                            ",
+            "                      /$$__  $$            | $$                                            ",
+            "                     | $$  \\ $$ /$$   /$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$",
+            "                     | $$$$$$$$| $$  | $$|_  $$_/   /$$__  $$ /$$__  $$|____ /$$/| $$  | $$",
+            "                     | $$__  $$| $$  | $$  | $$    | $$  \\ $$| $$  \\__/   /$$$$/ | $$  | $$",
+            "                     | $$  | $$| $$  | $$  | $$ /$$| $$  | $$| $$        /$$__/  | $$  | $$",
+            "                     | $$  | $$|  $$$$$$/  |  $$$$/|  $$$$$$/| $$       /$$$$$$$$|  $$$$$$$",
+            "                     |__/  |__/ \\______/    \\___/   \\______/ |__/      |________/ \\____  $$",
+            "                                                                                  /$$  | $$",
+            "                                                                                 |  $$$$$$/",
+            "                                                                                  \\______/ ",
             "",
+            "                                 Marcin Majewski = Glowny Programista",
             "",
+            "                                 Karol Salacinski = Ulepszenia i Dodatki do Gry",
             "",
+            "                                 Maciej Gawin = Ulepszenia i Dodatki do Gry",
             "",
+            "                                 Krystian Sokolowski = Beater i Poprawa bledow",
             "",
-            "                                   Marcin Majewski = Glowny Programista",
-            "",
-            "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
-            "",
-            "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
-            "",
-            "                                   Krystian Sokolowski = Beater i Poprawa bledow",
-            "",
-            "                                   Szymon Sloniowski = Interfejs Gry",
+            "                                 Szymon Sloniowski = Interfejs Gry",
             "",
             "",
             "",
@@ -388,6 +399,10 @@ void Game::Draw() {
                 this->outOfRangeError = false;
                 u.insert(u.end(), {separator, "ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
             }
+            if (this->kupnoSkrzynki){
+                this->kupnoSkrzynki = false;
+                u.insert(u.end(), {separator, "DROP #"+ to_string(this->nrSkrzynki)+ ": " + to_string(this->pienionzki)+"$", separator});
+            }
             break;
         case EQ:
             u.insert(u.end(), {"KUPIONE ULEPSZENIA:", "Wpisz ID ulepszenia aby wylaczyc/wlaczyc", separator});
@@ -426,6 +441,8 @@ unsigned int Player::getMoney() { return this->money; }
 void Player::addMoney(int i) { this->money += i; }
 
 bool Player::kupUlepszenie(int uid) {
+    if(this->maUlepszenie(uid))
+        return false;
     Ulepszenie *u = this->Gra->getUlepszenie(uid);
     if (this->getMoney() > u->getCost()) {
         this->money -= u->getCost();
@@ -469,7 +486,7 @@ map<string, int> Player::getCharacters() { return this->characters; }
 
 // =========================== ULEPSZENIA
 
-PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
+PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(6, cost) {}
 
 std::string PodwojnePieniadze1::getOpis() { return "Podwaja ilosc pieniedzy"; }
 int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
@@ -482,24 +499,12 @@ void PodwojnePieniadze1::buy(Game *g) {
 void PodwojnePieniadze1::equip(Game *g) {}
 void PodwojnePieniadze1::unequip(Game *g) {}
 
-UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
-std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
-int UzycieSlowaOwoc::use(Game *g, string s, unsigned int bm) { return 0; /* nie dodawaj zadnej kasy */ }
-void UzycieSlowaOwoc::buy(Game *g) {
-this->toggleEquip(g);
-}
-void UzycieSlowaOwoc::equip(Game *g) {
-    g->player->addFeedableCharacter("owoc", 15);
-}
-void UzycieSlowaOwoc::unequip(Game *g) {
-    g->player->removeFeedableCharacter("owoc");
-}
-
-Przecinek::Przecinek(int cost) : Ulepszenie::Ulepszenie(3, cost) {}
+Przecinek::Przecinek(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
 std::string Przecinek::getOpis() { return "Pozwala na uzycie przecinka"; }
 int Przecinek::use(Game *g, string s, unsigned int bm) { return 0; }
 void Przecinek::buy(Game *g) {
 this->toggleEquip(g);
+g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin()+this->getId()-1,(Ulepszenie*)new Nawiasy{1000});
 }
 void Przecinek::equip(Game *g) {
     g->player->addFeedableCharacter(",", 5);
@@ -508,11 +513,12 @@ void Przecinek::unequip(Game *g) {
     g->player->removeFeedableCharacter(",");
 }
 
-Nawiasy::Nawiasy(int cost) : Ulepszenie::Ulepszenie(4, cost) {}
+Nawiasy::Nawiasy(int cost) : Ulepszenie::Ulepszenie(3, cost) {}
 std::string Nawiasy::getOpis() { return "Pozwala na uzycie Nawiasow()"; }
 int Nawiasy::use(Game *g, string s, unsigned int bm) { return 0; }
 void Nawiasy::buy(Game *g) {
 this->toggleEquip(g);
+g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin()+this->getId()-1,(Ulepszenie*)new NaszaKlasa{2000});
 }
 void Nawiasy::equip(Game *g) {
     g->player->addFeedableCharacter("()", 20);
@@ -521,11 +527,12 @@ void Nawiasy::unequip(Game *g) {
     g->player->removeFeedableCharacter("()");
 }
 
-NaszaKlasa::NaszaKlasa(int cost) : Ulepszenie::Ulepszenie(5, cost) {}
+NaszaKlasa::NaszaKlasa(int cost) : Ulepszenie::Ulepszenie(4, cost) {}
 std::string NaszaKlasa::getOpis() { return "Pozwala na uzycie 2tb"; }
 int NaszaKlasa::use(Game *g, string s, unsigned int bm) { return 0; }
 void NaszaKlasa::buy(Game *g) {
 this->toggleEquip(g);
+g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin()+this->getId()-1,(Ulepszenie*)new PodwojnePieniadze1{50000});
 }
 void NaszaKlasa::equip(Game *g) {
     g->player->addFeedableCharacter("2tb", 50);
@@ -534,26 +541,35 @@ void NaszaKlasa::unequip(Game *g) {
     g->player->removeFeedableCharacter("2tb");
 }
 
-Skrzynka::Skrzynka(int cost) : Ulepszenie::Ulepszenie(6, cost) {}
-std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem"; }
+Skrzynka::Skrzynka(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
+std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem (20$, 500$, 1000$, a morze wiecej...)"; }
 int Skrzynka::use(Game *g, string s, unsigned int bm) { return 0; }
 void Skrzynka::buy(Game *g) {
-int drop = rand() %100+1;
+float drop = (rand() %10000+1)/100.0;
+g->kupnoSkrzynki = true;
+int p = 0;
+cout << drop <<endl;
 if(drop<35){
-    g->player->addMoney(20);
+    p = 20;
 
 }else if(drop<65&&drop>=35){
-    g->player->addMoney(500);
+    p = 500;
 
 } else if(drop<85&&drop>=65){
-    g->player->addMoney(1000);
+    p = 1000;
 
 }else if(drop<95&&drop>=85){
-    g->player->addMoney(2000);
+    p = 2000;
+
+}else if(drop<99.9&&drop>=85){
+    p = 4000;
 
 }else  {
-    g->player->addMoney(4000);
+    p = 2000000;
 }
+g->player->addMoney(p);
+g->pienionzki = p;
+g->nrSkrzynki++;
 int i=0;
 g->player->removeUlepszenie(this->getId());
 }

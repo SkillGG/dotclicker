@@ -73,6 +73,9 @@ private:
     UlepszeniaState ulstate;
 
 public:
+    int pienionzki;
+    bool kupnoSkrzynki;
+    int nrSkrzynki;
     bool commandNotFoundError;
     bool notEnoughMoneyError;
     bool outOfRangeError;
@@ -89,6 +92,7 @@ public:
     Game();
     void userInput(std::string s);
     void stop();
+    bool rutek;
 };
 
 /// ============================ ULEPSZENIA
@@ -144,16 +148,6 @@ public:
     /** co robi przy unequip */
     void unequip(Game *p);
     PodwojnePieniadze1(int cost);
-};
-
-class UzycieSlowaOwoc : public Ulepszenie {
-public:
-    std::string getOpis();
-    void buy(Game *p);
-    int use(Game *p, std::string s, unsigned int bm);
-    void equip(Game *p);
-    void unequip(Game *p);
-    UzycieSlowaOwoc(int cost);
 };
 
 class Przecinek : public Ulepszenie {
