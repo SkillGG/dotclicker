@@ -160,14 +160,14 @@ public:
     Przecinek(int cost);
 };
 
-class Nawiasy  : public Ulepszenie {
+class Nawiasy : public Ulepszenie {
 public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);
     void equip(Game *p);
     void unequip(Game *p);
-    Nawiasy (int cost);
+    Nawiasy(int cost);
 };
 
 class NaszaKlasa : public Ulepszenie {

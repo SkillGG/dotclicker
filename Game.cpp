@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string>
 #include <thread>
-#include <vector>
 #include <time.h>
+#include <vector>
 
 using namespace std;
 
@@ -34,10 +34,10 @@ Player::Player(Game *g) {
     this->ulepszenia = {};
 }
 
-void Player::removeUlepszenie(int uid){
-    for(size_t i=0; i<this->ulepszenia.size();i++){
-        if(this->ulepszenia.at(i)->getId()==uid){
-            this->ulepszenia.erase(this->ulepszenia.begin()+i);
+void Player::removeUlepszenie(int uid) {
+    for (size_t i = 0; i < this->ulepszenia.size(); i++) {
+        if (this->ulepszenia.at(i)->getId() == uid) {
+            this->ulepszenia.erase(this->ulepszenia.begin() + i);
         }
     }
 }
@@ -56,8 +56,7 @@ Game::Game() {
     // lista mozliwych ulepszen
     this->mozliweUlepszenia = {
         (Ulepszenie *)(new Skrzynka(1000)),
-        (Ulepszenie *)(new Przecinek(200))
-        };
+        (Ulepszenie *)(new Przecinek(200))};
     this->kupnoSkrzynki = false;
     this->pienionzki = 0;
     this->nrSkrzynki = 0;
@@ -68,9 +67,9 @@ Game::Game() {
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
     this->player->addFeedableCharacter("lo", 10000);
-    this->ulstate=UlepszeniaState::MAIN;
+    this->ulstate = UlepszeniaState::MAIN;
     this->rutek = false;
-    srand (time(NULL));
+    srand(time(NULL));
 }
 
 /** Zatrzymaj gre */
@@ -112,7 +111,7 @@ unsigned int Player::calculateBaseMoney(string s) {
 }
 
 void Player::feedString(string s) {
-    if (checkCommand("rutek",s)&&!this->Gra->rutek){
+    if (checkCommand("rutek", s) && !this->Gra->rutek) {
         this->addMoney(213742069);
         this->Gra->rutek = true;
         return;
@@ -399,9 +398,9 @@ void Game::Draw() {
                 this->outOfRangeError = false;
                 u.insert(u.end(), {separator, "ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
             }
-            if (this->kupnoSkrzynki){
+            if (this->kupnoSkrzynki) {
                 this->kupnoSkrzynki = false;
-                u.insert(u.end(), {separator, "DROP #"+ to_string(this->nrSkrzynki)+ ": " + to_string(this->pienionzki)+"$", separator});
+                u.insert(u.end(), {separator, "DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$", separator});
             }
             break;
         case EQ:
@@ -441,7 +440,7 @@ unsigned int Player::getMoney() { return this->money; }
 void Player::addMoney(int i) { this->money += i; }
 
 bool Player::kupUlepszenie(int uid) {
-    if(this->maUlepszenie(uid))
+    if (this->maUlepszenie(uid))
         return false;
     Ulepszenie *u = this->Gra->getUlepszenie(uid);
     if (this->getMoney() > u->getCost()) {
@@ -476,7 +475,6 @@ bool Player::equipUlepszenie(int id) {
     return false;
 }
 
-
 void Player::removeFeedableCharacter(string s) {
     auto it = this->characters.find(s);
     this->characters.erase(it);
@@ -503,8 +501,8 @@ Przecinek::Przecinek(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
 std::string Przecinek::getOpis() { return "Pozwala na uzycie przecinka"; }
 int Przecinek::use(Game *g, string s, unsigned int bm) { return 0; }
 void Przecinek::buy(Game *g) {
-this->toggleEquip(g);
-g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin()+this->getId()-1,(Ulepszenie*)new Nawiasy{1000});
+    this->toggleEquip(g);
+    g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin() + this->getId() - 1, (Ulepszenie *)new Nawiasy{1000});
 }
 void Przecinek::equip(Game *g) {
     g->player->addFeedableCharacter(",", 5);
@@ -517,8 +515,8 @@ Nawiasy::Nawiasy(int cost) : Ulepszenie::Ulepszenie(3, cost) {}
 std::string Nawiasy::getOpis() { return "Pozwala na uzycie Nawiasow()"; }
 int Nawiasy::use(Game *g, string s, unsigned int bm) { return 0; }
 void Nawiasy::buy(Game *g) {
-this->toggleEquip(g);
-g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin()+this->getId()-1,(Ulepszenie*)new NaszaKlasa{2000});
+    this->toggleEquip(g);
+    g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin() + this->getId() - 1, (Ulepszenie *)new NaszaKlasa{2000});
 }
 void Nawiasy::equip(Game *g) {
     g->player->addFeedableCharacter("()", 20);
@@ -531,8 +529,8 @@ NaszaKlasa::NaszaKlasa(int cost) : Ulepszenie::Ulepszenie(4, cost) {}
 std::string NaszaKlasa::getOpis() { return "Pozwala na uzycie 2tb"; }
 int NaszaKlasa::use(Game *g, string s, unsigned int bm) { return 0; }
 void NaszaKlasa::buy(Game *g) {
-this->toggleEquip(g);
-g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin()+this->getId()-1,(Ulepszenie*)new PodwojnePieniadze1{50000});
+    this->toggleEquip(g);
+    g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin() + this->getId() - 1, (Ulepszenie *)new PodwojnePieniadze1{50000});
 }
 void NaszaKlasa::equip(Game *g) {
     g->player->addFeedableCharacter("2tb", 50);
@@ -545,33 +543,33 @@ Skrzynka::Skrzynka(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
 std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem (20$, 500$, 1000$, a morze wiecej...)"; }
 int Skrzynka::use(Game *g, string s, unsigned int bm) { return 0; }
 void Skrzynka::buy(Game *g) {
-float drop = (rand() %10000+1)/100.0;
-g->kupnoSkrzynki = true;
-int p = 0;
-cout << drop <<endl;
-if(drop<35){
-    p = 20;
+    float drop = (rand() % 10000 + 1) / 100.0;
+    g->kupnoSkrzynki = true;
+    int p = 0;
+    cout << drop << endl;
+    if (drop < 35) {
+        p = 20;
 
-}else if(drop<65&&drop>=35){
-    p = 500;
+    } else if (drop < 65 && drop >= 35) {
+        p = 500;
 
-} else if(drop<85&&drop>=65){
-    p = 1000;
+    } else if (drop < 85 && drop >= 65) {
+        p = 1000;
 
-}else if(drop<95&&drop>=85){
-    p = 2000;
+    } else if (drop < 95 && drop >= 85) {
+        p = 2000;
 
-}else if(drop<99.9&&drop>=85){
-    p = 4000;
+    } else if (drop < 99.9 && drop >= 85) {
+        p = 4000;
 
-}else  {
-    p = 2000000;
-}
-g->player->addMoney(p);
-g->pienionzki = p;
-g->nrSkrzynki++;
-int i=0;
-g->player->removeUlepszenie(this->getId());
+    } else {
+        p = 2000000;
+    }
+    g->player->addMoney(p);
+    g->pienionzki = p;
+    g->nrSkrzynki++;
+    int i = 0;
+    g->player->removeUlepszenie(this->getId());
 }
 
 void Skrzynka::equip(Game *g) {}
