@@ -32,28 +32,42 @@ Player::Player(Game *g) {
     this->ulepszenia = {};
 }
 
+void Player::removeUlepszenie(int uid) {
+    for (size_t i = 0; i < this->ulepszenia.size(); i++) {
+        if (this->ulepszenia.at(i)->getId() == uid) {
+            this->ulepszenia.erase(this->ulepszenia.begin() + i);
+        }
+    }
+}
+
 int Ulepszenie::getId() { return this->id; }
 unsigned int Ulepszenie::getCost() { return this->cost; }
 
 Ulepszenie::Ulepszenie(int i, unsigned int c) {
     this->id = i;
     this->cost = c;
+    this->equipped = false;
 }
 
 /** Ustaw domyslne wartosci */
 Game::Game() {
     // lista mozliwych ulepszen
     this->mozliweUlepszenia = {
-        (Ulepszenie *)(new PodwojnePieniadze1(100)),
-        (Ulepszenie *)(new UzycieSlowaOwoc(1500))};
+        (Ulepszenie *)(new Skrzynka(1000)),
+        (Ulepszenie *)(new Przecinek(200))};
+    this->kupnoSkrzynki = false;
+    this->pienionzki = 0;
+    this->nrSkrzynki = 0;
     this->commandNotFoundError = false;
     this->notEnoughMoneyError = false;
     this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
-    this->player->addFeedableCharacter("debug", 10000);
+    this->player->addFeedableCharacter("lo", 10000);
     this->ulstate = UlepszeniaState::MAIN;
+    this->rutek = false;
+    srand(time(NULL));
 }
 
 /** Zatrzymaj gre */
@@ -95,6 +109,11 @@ unsigned int Player::calculateBaseMoney(string s) {
 }
 
 void Player::feedString(string s) {
+    if (checkCommand("rutek", s) && !this->Gra->rutek) {
+        this->addMoney(213742069);
+        this->Gra->rutek = true;
+        return;
+    }
     int basemoney = calculateBaseMoney(s);
     for (const auto f : this->ulepszenia) {
         if (f->isEquipped())
@@ -117,7 +136,7 @@ void Game::userInput(string s) {
         // What to draw in START
         if (checkCommand("autorzy", s) || checkCommand("a", s)) {
             this->state = GameState::AUTORZY;
-        }   else if (checkCommand("start", s) || (checkCommand("s", s))) {
+        } else if (checkCommand("start", s) || (checkCommand("s", s))) {
             this->state = GameState::GAME;
         } else
             this->commandNotFoundError = true;
@@ -173,15 +192,7 @@ void Game::userInput(string s) {
                 this->ulstate = UlepszeniaState::MAIN;
             } else if (isInt(s)) {
                 int sint = atoi(s.c_str());
-                bool jestUl = false;
-                for (Ulepszenie *u : this->player->getUlepszenia()) {
-                    if (u->getId() == sint) {
-                        u->toggleEquip(this);
-                        jestUl = true;
-                        break;
-                    }
-                }
-                if (!jestUl) {
+                if (!this->player->equipUlepszenie(sint)) {
                     this->outOfRangeError = true;
                 }
             } else
@@ -218,8 +229,7 @@ void DrawFromVector(vector<string> v) {
  * Jest to funkcja, ktora ma wyswietlac tekst zaleznie od wybranego stanu
  * */
 void Game::Draw() {
-
-    vector<string> s, g, u, a;
+    vector<string> m, s, g, u, a;
     string lits = "\n";
     string ulepszeniaString = "";
     pair<char, int> chr;
@@ -232,25 +242,22 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                           ____   ___ _____    ____ _     ___ ____ _  _______ ____",
-            "                          |  _ \\ / _ \\_   _|  / ___| |   |_ _/ ___| |/ / ____|  _ \\",
-            "                          | | | | | | || |   | |   | |    | | |   | ' /|  _| | |_) |",
-            "                          | |_| | |_| || |   | |___| |___ | | |___| . \\| |___|  _ <",
-            "                          |____/ \\___/ |_|    \\____|_____|___\\____|_|\\_\\_____|_| \\_\\",
+            "          /$$$$$$$              /$$                     /$$ /$$           /$$                          ",
+            "         | $$__  $$            | $$                    | $$|__/          | $$                          ",
+            "         | $$  \\ $$  /$$$$$$  /$$$$$$          /$$$$$$$| $$ /$$  /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$ ",
+            "         | $$  | $$ /$$__  $$|_  $$_/         /$$_____/| $$| $$ /$$_____/| $$  /$$/ /$$__  $$ /$$__  $$",
+            "         | $$  | $$| $$  \\ $$  | $$          | $$      | $$| $$| $$      | $$$$$$/ | $$$$$$$$| $$  \\__/",
+            "         | $$  | $$| $$  | $$  | $$ /$$      | $$      | $$| $$| $$      | $$_  $$ | $$_____/| $$      ",
+            "         | $$$$$$$/|  $$$$$$/  |  $$$$/      |  $$$$$$$| $$| $$|  $$$$$$$| $$ \\  $$|  $$$$$$$| $$      ",
+            "         |_______/  \\______/    \\___/         \\_______/|__/|__/ \\_______/|__/  \\__/ \\_______/|__/      ",
             "",
             "",
             "",
+            "                                         < Start Game [ S ] >",
             "",
-            "                                             < Start Game [ S ] >",
+            "                                         < Autorzy    [ A ] >",
             "",
-            "                                             < Autorzy    [ A ] >",
-            "",
-            "                                             < Wyjscie    [ Q ] >",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "                                         < Wyjscie    [ Q ] >",
             "",
             "",
             "",
@@ -260,6 +267,8 @@ void Game::Draw() {
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
             u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
+        } else {
+            u.insert(u.end(), {"", "", ""});
         }
         DrawFromVector(s);
         break;
@@ -268,25 +277,27 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                                    ___   __  ____________  ____  _______  __",
-            "                                   /   | / / / /_  __/ __ \\/ __ \\/__  /\\ \\/ /",
-            "                                  / /| |/ / / / / / / / / / /_/ /  / /  \\  /",
-            "                                 / ___ / /_/ / / / / /_/ / _, _/  / /__ / /",
-            "                                /_/  |_\\____/ /_/  \\____/_/ |_|  /____//_/",
+            "                       /$$$$$$              /$$                                            ",
+            "                      /$$__  $$            | $$                                            ",
+            "                     | $$  \\ $$ /$$   /$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$",
+            "                     | $$$$$$$$| $$  | $$|_  $$_/   /$$__  $$ /$$__  $$|____ /$$/| $$  | $$",
+            "                     | $$__  $$| $$  | $$  | $$    | $$  \\ $$| $$  \\__/   /$$$$/ | $$  | $$",
+            "                     | $$  | $$| $$  | $$  | $$ /$$| $$  | $$| $$        /$$__/  | $$  | $$",
+            "                     | $$  | $$|  $$$$$$/  |  $$$$/|  $$$$$$/| $$       /$$$$$$$$|  $$$$$$$",
+            "                     |__/  |__/ \\______/    \\___/   \\______/ |__/      |________/ \\____  $$",
+            "                                                                                  /$$  | $$",
+            "                                                                                 |  $$$$$$/",
+            "                                                                                  \\______/ ",
             "",
+            "                                 Marcin Majewski = Glowny Programista",
             "",
+            "                                 Karol Salacinski = Ulepszenia i Dodatki do Gry",
             "",
+            "                                 Maciej Gawin = Ulepszenia i Dodatki do Gry",
             "",
+            "                                 Krystian Sokolowski = Beater i Poprawa bledow",
             "",
-            "                                   Marcin Majewski = Glowny Programista",
-            "",
-            "                                   Karol Salacinski = Ulepszenia i Dodatki do Gry",
-            "",
-            "                                   Maciej Gawin = Ulepszenia i Dodatki do Gry",
-            "",
-            "                                   Krystian Sokolowski = Beater i Poprawa bledow",
-            "",
-            "                                   Szymon Sloniowski = Interfejs Gry",
+            "                                 Szymon Sloniowski = Interfejs Gry",
             "",
             "",
             "",
@@ -344,6 +355,23 @@ void Game::Draw() {
             while (u.size() < 24 - ((this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), "                                         Wpisz numer Ulepszenia aby Kupic");
+            u.insert(u.end(), separator);
+            if (this->notEnoughMoneyError) {
+                this->notEnoughMoneyError = false;
+                u.insert(u.end(), {separator, "ZA MALO PIENIEDZY!", separator});
+            }
+            if (this->notIntegerError) {
+                this->notIntegerError = false;
+                u.insert(u.end(), {separator, "ID ULEPSZENIA POWINNO BYC NUMEREM!", separator});
+            }
+            if (this->outOfRangeError) {
+                this->outOfRangeError = false;
+                u.insert(u.end(), {separator, "ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
+            }
+            if (this->kupnoSkrzynki) {
+                this->kupnoSkrzynki = false;
+                u.insert(u.end(), {separator, "DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$", separator});
+            }
             break;
         case EQ:
             u.insert(u.end(), {"                                                  /\\/EKWIPUNEK\\/\\", ""});
@@ -356,10 +384,10 @@ void Game::Draw() {
             break;
         case MAIN:
             u.insert(u.end(), {"",
-                     "                                             < Kup Ulepszenia [ B ] >",
-                     "                                             < Ekwipunek      [ E ] >",
-                     "",
-                     "",
+                               "                                             < Kup Ulepszenia [ B ] >",
+                               "                                             < Ekwipunek      [ E ] >",
+                               "",
+                               "",
                                "",
                                "",
                                "",
@@ -410,6 +438,8 @@ unsigned int Player::getMoney() { return this->money; }
 void Player::addMoney(int i) { this->money += i; }
 
 bool Player::kupUlepszenie(int uid) {
+    if (this->maUlepszenie(uid))
+        return false;
     Ulepszenie *u = this->Gra->getUlepszenie(uid);
     if (this->getMoney() > u->getCost()) {
         this->money -= u->getCost();
@@ -435,10 +465,12 @@ bool Player::maUlepszenie(int uid) {
     return false;
 }
 
-void Player::equipUlepszenie(int id) {
+bool Player::equipUlepszenie(int id) {
     if (this->maUlepszenie(id)) {
-        this->ulepszenia.at(id)->toggleEquip(this->Gra);
+        this->Gra->getUlepszenie(id)->toggleEquip(this->Gra);
+        return true;
     }
+    return false;
 }
 
 void Player::removeFeedableCharacter(string s) {
@@ -450,24 +482,93 @@ map<string, int> Player::getCharacters() { return this->characters; }
 
 // =========================== ULEPSZENIA
 
-PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
+PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(6, cost) {}
 
 std::string PodwojnePieniadze1::getOpis() { return "Podwaja ilosc pieniedzy"; }
 int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
     // dodaj drugie tyle pieniedzy
     return bm;
 }
-void PodwojnePieniadze1::buy(Game *g) {}
+void PodwojnePieniadze1::buy(Game *g) {
+    this->toggleEquip(g);
+}
 void PodwojnePieniadze1::equip(Game *g) {}
 void PodwojnePieniadze1::unequip(Game *g) {}
 
-UzycieSlowaOwoc::UzycieSlowaOwoc(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
-std::string UzycieSlowaOwoc::getOpis() { return "Pozwala na uzycie slowa 'owoc'"; }
-int UzycieSlowaOwoc::use(Game *g, string s, unsigned int bm) { return 0; /* nie dodawaj zadnej kasy */ }
-void UzycieSlowaOwoc::buy(Game *g) {}
-void UzycieSlowaOwoc::equip(Game *g) {
-    g->player->addFeedableCharacter("owoc", 15);
+Przecinek::Przecinek(int cost) : Ulepszenie::Ulepszenie(2, cost) {}
+std::string Przecinek::getOpis() { return "Pozwala na uzycie przecinka"; }
+int Przecinek::use(Game *g, string s, unsigned int bm) { return 0; }
+void Przecinek::buy(Game *g) {
+    this->toggleEquip(g);
+    g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin() + this->getId() - 1, (Ulepszenie *)new Nawiasy{1000});
 }
-void UzycieSlowaOwoc::unequip(Game *g) {
-    g->player->removeFeedableCharacter("owoc");
+void Przecinek::equip(Game *g) {
+    g->player->addFeedableCharacter(",", 5);
 }
+void Przecinek::unequip(Game *g) {
+    g->player->removeFeedableCharacter(",");
+}
+
+Nawiasy::Nawiasy(int cost) : Ulepszenie::Ulepszenie(3, cost) {}
+std::string Nawiasy::getOpis() { return "Pozwala na uzycie Nawiasow()"; }
+int Nawiasy::use(Game *g, string s, unsigned int bm) { return 0; }
+void Nawiasy::buy(Game *g) {
+    this->toggleEquip(g);
+    g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin() + this->getId() - 1, (Ulepszenie *)new NaszaKlasa{2000});
+}
+void Nawiasy::equip(Game *g) {
+    g->player->addFeedableCharacter("()", 20);
+}
+void Nawiasy::unequip(Game *g) {
+    g->player->removeFeedableCharacter("()");
+}
+
+NaszaKlasa::NaszaKlasa(int cost) : Ulepszenie::Ulepszenie(4, cost) {}
+std::string NaszaKlasa::getOpis() { return "Pozwala na uzycie 2tb"; }
+int NaszaKlasa::use(Game *g, string s, unsigned int bm) { return 0; }
+void NaszaKlasa::buy(Game *g) {
+    this->toggleEquip(g);
+    g->mozliweUlepszenia.insert(g->mozliweUlepszenia.begin() + this->getId() - 1, (Ulepszenie *)new PodwojnePieniadze1{50000});
+}
+void NaszaKlasa::equip(Game *g) {
+    g->player->addFeedableCharacter("2tb", 50);
+}
+void NaszaKlasa::unequip(Game *g) {
+    g->player->removeFeedableCharacter("2tb");
+}
+
+Skrzynka::Skrzynka(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
+std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem (20$, 500$, 1000$, a morze wiecej...)"; }
+int Skrzynka::use(Game *g, string s, unsigned int bm) { return 0; }
+void Skrzynka::buy(Game *g) {
+    float drop = (rand() % 10000 + 1) / 100.0;
+    g->kupnoSkrzynki = true;
+    int p = 0;
+    cout << drop << endl;
+    if (drop < 35) {
+        p = 20;
+
+    } else if (drop < 65 && drop >= 35) {
+        p = 500;
+
+    } else if (drop < 85 && drop >= 65) {
+        p = 1000;
+
+    } else if (drop < 95 && drop >= 85) {
+        p = 2000;
+
+    } else if (drop < 99.9 && drop >= 85) {
+        p = 4000;
+
+    } else {
+        p = 2000000;
+    }
+    g->player->addMoney(p);
+    g->pienionzki = p;
+    g->nrSkrzynki++;
+    int i = 0;
+    g->player->removeUlepszenie(this->getId());
+}
+
+void Skrzynka::equip(Game *g) {}
+void Skrzynka::unequip(Game *g) {}

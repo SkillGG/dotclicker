@@ -49,10 +49,12 @@ public:
     std::vector<Ulepszenie *> getUlepszenia() { return this->ulepszenia; }
     /** Sprawdz czy ma ulepszenie */
     bool maUlepszenie(int uid);
+    /**Usuwa ulepszenie*/
+    void removeUlepszenie(int uid);
     /** Kup Ulepszenie */
     bool kupUlepszenie(int uid);
     /** Zaloz ulepszenie */
-    void equipUlepszenie(int uid);
+    bool equipUlepszenie(int uid);
     /** Usun string do wpisania */
     void removeFeedableCharacter(std::string c);
     /** Dodaj znak, do wpisania */
@@ -70,6 +72,9 @@ private:
     UlepszeniaState ulstate;
 
 public:
+    int pienionzki;
+    bool kupnoSkrzynki;
+    int nrSkrzynki;
     bool commandNotFoundError;
     bool notEnoughMoneyError;
     bool outOfRangeError;
@@ -86,6 +91,7 @@ public:
     Game();
     void userInput(std::string s);
     void stop();
+    bool rutek;
 };
 
 /// ============================ ULEPSZENIA
@@ -143,14 +149,43 @@ public:
     PodwojnePieniadze1(int cost);
 };
 
-class UzycieSlowaOwoc : public Ulepszenie {
+class Przecinek : public Ulepszenie {
 public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);
     void equip(Game *p);
     void unequip(Game *p);
-    UzycieSlowaOwoc(int cost);
+    Przecinek(int cost);
 };
 
+class Nawiasy : public Ulepszenie {
+public:
+    std::string getOpis();
+    void buy(Game *p);
+    int use(Game *p, std::string s, unsigned int bm);
+    void equip(Game *p);
+    void unequip(Game *p);
+    Nawiasy(int cost);
+};
+
+class NaszaKlasa : public Ulepszenie {
+public:
+    std::string getOpis();
+    void buy(Game *p);
+    int use(Game *p, std::string s, unsigned int bm);
+    void equip(Game *p);
+    void unequip(Game *p);
+    NaszaKlasa(int cost);
+};
+
+class Skrzynka : public Ulepszenie {
+public:
+    std::string getOpis();
+    void buy(Game *p);
+    int use(Game *p, std::string s, unsigned int bm);
+    void equip(Game *p);
+    void unequip(Game *p);
+    Skrzynka(int cost);
+};
 #endif
