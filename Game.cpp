@@ -59,15 +59,24 @@ Game::Game() {
     this->pienionzki = 0;
     this->nrSkrzynki = 0;
     this->commandNotFoundError = false;
+    this->notIntegerError = false;
+    this->outOfRangeError = false;
     this->notEnoughMoneyError = false;
+    this->lastInput = "";
     this->state = GameState::START;
     this->running = true;
     this->player = new Player(this);
     this->player->addFeedableCharacter(".", 1);
-    this->player->addFeedableCharacter("lo", 10000);
     this->ulstate = UlepszeniaState::MAIN;
     this->rutek = false;
     srand(time(NULL));
+}
+
+Game::~Game() {
+    delete this->player;
+    for (auto n : this->mozliweUlepszenia) {
+        delete n;
+    }
 }
 
 /** Zatrzymaj gre */
@@ -566,7 +575,6 @@ void Skrzynka::buy(Game *g) {
     g->player->addMoney(p);
     g->pienionzki = p;
     g->nrSkrzynki++;
-    int i = 0;
     g->player->removeUlepszenie(this->getId());
 }
 

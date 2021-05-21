@@ -89,6 +89,7 @@ public:
     Player *player;
     void start();
     Game();
+    ~Game();
     void userInput(std::string s);
     void stop();
     bool rutek;
