@@ -9,11 +9,11 @@ bool running = true;
 
 int main() {
     /* Game loop, nie tykac!! */
-    system("resize -s 30 110");
+    //system("resize -s 30 110");
     Game *g = new Game();
     while (g->isRunning() == true) {
         system("cls");
-        system("clear");
+        //system("clear");
         g->Draw();
         string s;
         getline(cin, s);

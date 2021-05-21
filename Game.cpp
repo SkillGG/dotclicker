@@ -72,7 +72,6 @@ Game::Game() {
     srand(time(NULL));
 }
 
-
 Game::~Game() {
     delete this->player;
     for (auto n : this->mozliweUlepszenia) {
@@ -215,7 +214,8 @@ void Game::userInput(string s) {
                 this->ulstate = UlepszeniaState::KUP;
             } else if (checkCommand("e", s) || checkCommand("eq", s) || checkCommand("ekwipunek", s)) {
                 this->ulstate = UlepszeniaState::EQ;
-            }
+            } else
+                this->commandNotFoundError = true;
             break;
         default:
             break;
@@ -245,6 +245,7 @@ void Game::Draw() {
     pair<char, int> chr;
     size_t i = 0;
     const string separator = "==============================================================================================================";
+    const string nieZnaleziono = "                                            NIE MA TAKIEJ KOMENDY!";
     switch (this->getState()) {
     case START:
         // What to draw in START
@@ -263,13 +264,11 @@ void Game::Draw() {
             "",
             "",
             "",
-            "                                         < Start Game [ S ] >",
+            "                                       < Start Game     [ S ] >",
             "",
-            "                                         < Autorzy    [ A ] >",
+            "                                       < Autorzy        [ A ] >",
             "",
-            "                                         < Wyjscie    [ Q ] >",
-            "",
-            "",
+            "                                       < Wyjscie        [ Q ] >",
             "",
             "",
             "",
@@ -279,9 +278,9 @@ void Game::Draw() {
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            s.insert(u.end(), {separator, "Nie znaleziono komendy!", separator});
+            s.insert(s.end(), {nieZnaleziono, separator});
         } else {
-            s.insert(u.end(), {"", "", ""});
+            s.insert(s.end() - 2, {"", ""});
         }
         DrawFromVector(s);
         break;
@@ -301,24 +300,23 @@ void Game::Draw() {
             "                                                                                  /$$  | $$",
             "                                                                                 |  $$$$$$/",
             "                                                                                  \\______/ ",
+            "                                Marcin Majewski = Glowny Programista",
             "",
-            "                                 Marcin Majewski = Glowny Programista",
+            "                                Karol Salacinski = Ulepszenia i Dodatki do Gry",
             "",
-            "                                 Karol Salacinski = Ulepszenia i Dodatki do Gry",
+            "                                Maciej Gawin = Ulepszenia i Dodatki do Gry",
             "",
-            "                                 Maciej Gawin = Ulepszenia i Dodatki do Gry",
+            "                                Krystian Sokolowski = Beater i Poprawa bledow",
             "",
-            "                                 Krystian Sokolowski = Beater i Poprawa bledow",
-            "",
-            "                                 Szymon Sloniowski = Interfejs Gry",
+            "                                Szymon Sloniowski = Interfejs Gry",
             "",
             " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            a.insert(u.end(), {separator, "Nie znaleziono komendy!", separator});
+            a.insert(a.end(), {nieZnaleziono, separator});
         } else {
-            a.insert(u.end(), {"", "", ""});
+            a.insert(a.end() - 2, {"", "", ""});
         }
         DrawFromVector(a);
         break;
@@ -347,12 +345,16 @@ void Game::Draw() {
         u = {
             separator + "\n",
             "",
-            "                         _   _ _      ___________  _____  ______ _____ _   _ _____  ___",
-            "                        | | | | |    |  ___| ___ \\/  ___||___  /|  ___| \\ | |_   _|/ _ \\",
-            "                        | | | | |    | |__ | |_/ /\\ `--.    / / | |__ |  \\| | | | / /_\\ \\",
-            "                        | | | | |    |  __||  __/  `--. \\  / /  |  __|| . ` | | | |  _  |",
-            "                        | |_| | |____| |___| |    /\\__/ /./ /___| |___| |\\  |_| |_| | | |",
-            "                         \\___/\\_____/\\____/\\_|    \\____/ \\_____/\\____/\\_| \\_/\\___/\\_| |_/",
+            "            /$$   /$$ /$$                                                             /$$   ",
+            "           | $$  | $$| $$                                                            |__/    ",
+            "           | $$  | $$| $$  /$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$$  /$$$$$$  /$$$$$$$  /$$  /$$$$$$ ",
+            "           | $$  | $$| $$ /$$__  $$ /$$__  $$ /$$_____/|____ /$$/ /$$__  $$| $$__  $$| $$ |____  $$",
+            "           | $$  | $$| $$| $$$$$$$$| $$  \\ $$|  $$$$$$    /$$$$/ | $$$$$$$$| $$  \\ $$| $$  /$$$$$$$",
+            "           | $$  | $$| $$| $$_____/| $$  | $$ \\____  $$  /$$__/  | $$_____/| $$  | $$| $$ /$$__  $$",
+            "           |  $$$$$$/| $$|  $$$$$$$| $$$$$$$/ /$$$$$$$/ /$$$$$$$$|  $$$$$$$| $$  | $$| $$|  $$$$$$$",
+            "            \\______/ |__/ \\_______/| $$____/ |_______/ |________/ \\_______/|__/  |__/|__/ \\_______/",
+            "                                   | $$",
+            "                                   |__/",
             "",
             ""};
         switch (this->ulstate) {
@@ -367,7 +369,7 @@ void Game::Draw() {
                     u.insert(u.end(), xx);
                 }
             }
-            while (u.size() < 24 - ((this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+            while (u.size() < 24 - ((this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), "                                         Wpisz numer Ulepszenia aby Kupic");
             break;
@@ -376,26 +378,24 @@ void Game::Draw() {
             for (const auto ulep : this->player->getUlepszenia()) {
                 u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
             }
-            while (u.size() < 24 - ((this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+            while (u.size() < 24 - ((this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
-            u.insert(u.end(), "                                   Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc");
+            u.insert(u.end(), "                                Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc");
             break;
         case MAIN:
             u.insert(u.end(), {"",
-                               "                                             < Kup Ulepszenia [ B ] >",
-                               "                                             < Ekwipunek      [ E ] >",
-                               "",
-                               "",
-                               "",
-                               "",
-                               "",
-                               "",
+                               "                                       < Kup Ulepszenia [ B ] >",
+                               "                                       < Ekwipunek      [ E ] >",
+
                                "",
                                "",
                                "",
                                "",
                                "",
                                ""});
+            if (!this->commandNotFoundError) {
+                u.insert(u.end(), {"", ""});
+            }
             break;
         default:
             cout << (int)this->ulstate;
@@ -420,6 +420,10 @@ void Game::Draw() {
         if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
             this->outOfRangeError = false;
             u.insert(u.end(), {"                                       NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!", separator});
+        }
+        if (this->commandNotFoundError && this->ulstate == UlepszeniaState::MAIN) {
+            this->commandNotFoundError = false;
+            u.insert(u.end(), {nieZnaleziono, separator});
         }
         if (this->kupnoSkrzynki) {
             this->kupnoSkrzynki = false;
