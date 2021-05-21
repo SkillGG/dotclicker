@@ -72,6 +72,7 @@ Game::Game() {
     srand(time(NULL));
 }
 
+
 Game::~Game() {
     delete this->player;
     for (auto n : this->mozliweUlepszenia) {
@@ -272,12 +273,15 @@ void Game::Draw() {
             "",
             "",
             "",
+            "",
+            "",
+            "",
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
-            u.insert(u.end(), {"", "Nie znaleziono komendy!", "", separator});
+            s.insert(u.end(), {separator, "Nie znaleziono komendy!", separator});
         } else {
-            u.insert(u.end(), {"", "", ""});
+            s.insert(u.end(), {"", "", ""});
         }
         DrawFromVector(s);
         break;
@@ -308,11 +312,14 @@ void Game::Draw() {
             "",
             "                                 Szymon Sloniowski = Interfejs Gry",
             "",
-            "",
-            "",
-            "",
             " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
             separator};
+        if (this->commandNotFoundError) {
+            this->commandNotFoundError = false;
+            a.insert(u.end(), {separator, "Nie znaleziono komendy!", separator});
+        } else {
+            a.insert(u.end(), {"", "", ""});
+        }
         DrawFromVector(a);
         break;
     case GAME:
@@ -348,7 +355,6 @@ void Game::Draw() {
             "                         \\___/\\_____/\\____/\\_|    \\____/ \\_____/\\____/\\_| \\_/\\___/\\_| |_/",
             "",
             ""};
-
         switch (this->ulstate) {
         case KUP:
             u.insert(u.end(), {
@@ -364,23 +370,6 @@ void Game::Draw() {
             while (u.size() < 24 - ((this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), "                                         Wpisz numer Ulepszenia aby Kupic");
-            u.insert(u.end(), separator);
-            if (this->notEnoughMoneyError) {
-                this->notEnoughMoneyError = false;
-                u.insert(u.end(), {separator, "ZA MALO PIENIEDZY!", separator});
-            }
-            if (this->notIntegerError) {
-                this->notIntegerError = false;
-                u.insert(u.end(), {separator, "ID ULEPSZENIA POWINNO BYC NUMEREM!", separator});
-            }
-            if (this->outOfRangeError) {
-                this->outOfRangeError = false;
-                u.insert(u.end(), {separator, "ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
-            }
-            if (this->kupnoSkrzynki) {
-                this->kupnoSkrzynki = false;
-                u.insert(u.end(), {separator, "DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$", separator});
-            }
             break;
         case EQ:
             u.insert(u.end(), {"                                                  /\\/EKWIPUNEK\\/\\", ""});
@@ -431,6 +420,10 @@ void Game::Draw() {
         if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
             this->outOfRangeError = false;
             u.insert(u.end(), {"                                       NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!", separator});
+        }
+        if (this->kupnoSkrzynki) {
+            this->kupnoSkrzynki = false;
+            u.insert(u.end(), {"                                    DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$", separator});
         }
         DrawFromVector(u);
         break;
