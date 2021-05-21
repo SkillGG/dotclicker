@@ -5,13 +5,11 @@
 
 using namespace std;
 
-int lasttick = 0;
-int thistick = 0;
-
 bool running = true;
 
 int main() {
     /* Game loop, nie tykac!! */
+    system("resize -s 30 110");
     Game *g = new Game();
     while (g->isRunning() == true) {
         system("cls");
