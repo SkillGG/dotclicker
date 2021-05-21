@@ -370,7 +370,7 @@ void Game::Draw() {
                     u.insert(u.end(), xx);
                 }
             }
-            while (u.size() < 24 - ((this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+            while (u.size() < 24 - ((this->kupnoSkrzynki || this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), "                                         Wpisz numer Ulepszenia aby Kupic");
             break;
@@ -379,7 +379,7 @@ void Game::Draw() {
             for (const auto ulep : this->player->getUlepszenia()) {
                 u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
             }
-            while (u.size() < 24 - ((this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+            while (u.size() < 24 - ((this->kupnoSkrzynki || this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), "                                Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc");
             break;
@@ -545,7 +545,7 @@ void NaszaKlasa::unequip(Game *g) {
 }
 
 Skrzynka::Skrzynka(int cost) : Ulepszenie::Ulepszenie(1, cost) {}
-std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem (20$, 500$, 1000$, a morze wiecej...)"; }
+std::string Skrzynka::getOpis() { return "Skrzynka z losowym dropem (20$, 500$, 1000$, a moze i wiecej...)"; }
 int Skrzynka::use(Game *g, string s, unsigned int bm) { return 0; }
 void Skrzynka::buy(Game *g) {
     float drop = (rand() % 10000 + 1) / 100.0;
