@@ -134,6 +134,7 @@ public:
     virtual void unequip(Game *p){};
     /** Konstruktor */
     Ulepszenie(int id, unsigned int cost);
+    virtual ~Ulepszenie() = default;
 };
 
 class PodwojnePieniadze1 : public Ulepszenie {

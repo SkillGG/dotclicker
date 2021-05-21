@@ -243,7 +243,7 @@ void Game::Draw() {
     string lits = "\n";
     string ulepszeniaString = "";
     pair<char, int> chr;
-    int i = 0;
+    size_t i = 0;
     const string separator = "==============================================================================================================";
     switch (this->getState()) {
     case START:
