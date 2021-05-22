@@ -28,7 +28,7 @@ class Ulepszenie;
  * Gracz
  */
 class Player {
-private:
+   private:
     /** pieniadze gracza */
     unsigned int money;
     /** ulepszenia ktore posiada gracz */
@@ -38,7 +38,7 @@ private:
     /** Znaki, ktore mozna uzywac */
     std::map<std::string, int> characters;
 
-public:
+   public:
     /** ile ma pieniedzy */
     unsigned int getMoney();
     unsigned int calculateBaseMoney(std::string s);
@@ -65,12 +65,12 @@ public:
 };
 
 class Game {
-private:
+   private:
     bool running;
     GameState state;
     UlepszeniaState ulstate;
 
-public:
+   public:
     int pienionzki;
     bool kupnoSkrzynki;
     int nrSkrzynki;
@@ -101,7 +101,7 @@ public:
  * Wszystkie ulepszenia musza miec:
  */
 class Ulepszenie {
-private:
+   private:
     /** cena ulepszenia */
     unsigned int cost;
     /** id ulepszenia */
@@ -109,7 +109,7 @@ private:
     /** Czy jest wlaczone */
     bool equipped;
 
-public:
+   public:
     /** Daj ID */
     int getId();
     /** daj mi cene */
@@ -139,7 +139,7 @@ public:
 };
 
 class PodwojnePieniadze1 : public Ulepszenie {
-public:
+   public:
     std::string getOpis();
     /** co robi tuz po kupnie */
     void buy(Game *p);
@@ -152,7 +152,7 @@ public:
 };
 
 class Przecinek : public Ulepszenie {
-public:
+   public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);
@@ -162,7 +162,7 @@ public:
 };
 
 class Nawiasy : public Ulepszenie {
-public:
+   public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);
@@ -172,7 +172,7 @@ public:
 };
 
 class NaszaKlasa : public Ulepszenie {
-public:
+   public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);
@@ -182,7 +182,7 @@ public:
 };
 
 class Skrzynka : public Ulepszenie {
-public:
+   public:
     std::string getOpis();
     void buy(Game *p);
     int use(Game *p, std::string s, unsigned int bm);

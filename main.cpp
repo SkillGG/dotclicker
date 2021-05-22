@@ -1,7 +1,9 @@
-#include "Game.h"
-#include <iostream>
 #include <stdio.h>
+
+#include <iostream>
 #include <string>
+
+#include "Game.h"
 
 using namespace std;
 
@@ -9,7 +11,7 @@ bool running = true;
 
 int main() {
     /* Game loop, nie tykac!! */
-    system("resize -s 30 110");
+    system("resize -s 30 100");
     Game *g = new Game();
     while (g->isRunning() == true) {
         system("clear");

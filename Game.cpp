@@ -1,11 +1,13 @@
 #include "Game.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 #include <algorithm>
 #include <iostream>
 #include <map>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
-#include <time.h>
 #include <vector>
 
 using namespace std;
@@ -33,12 +35,11 @@ int checkCommand(string s1, string s2) {
     transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
     transform(s2.begin(), s2.end(), s2.begin(), ::tolower);
     if (s1.compare(s2) == 0)
-        return true; //The strings are same
-    return false;    //not matched
+        return true;  //The strings are same
+    return false;     //not matched
 }
 
 int countOccurences(const string &str, const string &findStr) {
-
     const int step = findStr.size();
     int count(0);
     size_t pos(0);
@@ -111,88 +112,88 @@ void Game::userInput(string s) {
     if (checkCommand("quit", s) || checkCommand("q", s))
         this->stop();
     switch (this->getState()) {
-    case GameState::START:
-        // What to draw in START
-        if (checkCommand("autorzy", s) || checkCommand("a", s))
-            this->state = GameState::AUTORZY;
-        else if (checkCommand("start", s) || (checkCommand("s", s)))
-            this->state = GameState::GAME;
-        else
-            this->commandNotFoundError = true;
-        break;
-    case GameState::GAME:
-        // What to draw in GAME
-        if (checkCommand("menu", s))
-            this->state = GameState::START;
-        else if (checkCommand("ulepszenia", s) || checkCommand("u", s))
-            this->state = GameState::ULEPSZENIA;
-        else if (checkCommand("powrot", s) || checkCommand("p", s))
-            this->state = GameState::START;
-        else
-            this->player->feedString(s);
-
-        break;
-    case GameState::AUTORZY:
-        //// What to draw in AUTORZY
-        if (checkCommand("powrot", s) || checkCommand("p", s))
-            this->state = GameState::START;
-        else
-            this->commandNotFoundError = true;
-
-        break;
-    case GameState::ULEPSZENIA:
-        //// What to draw in ULEPSZENIA
-        switch (this->ulstate) {
-        case KUP:
-            if (checkCommand("p", s) || checkCommand("powrot", s))
-                this->ulstate = UlepszeniaState::MAIN;
-            else if (isInt(s)) {
-                int sint = atoi(s.c_str());
-                bool jestUl = false;
-                for (Ulepszenie *u : this->mozliweUlepszenia) {
-                    if (u->getId() == sint) {
-                        jestUl = true;
-                        break;
-                    }
-                }
-                if (jestUl) {
-                    if (this->player->maUlepszenie(atoi(s.c_str())))
-                        this->playerAlreadyBought = true;
-                    else if (!this->player->kupUlepszenie(atoi(s.c_str())))
-                        this->notEnoughMoneyError = true;
-                } else
-                    this->outOfRangeError = true;
-            } else
-                this->notIntegerError = true;
-            break;
-        case EQ:
-            if (checkCommand("p", s) || checkCommand("powrot", s)) {
-                this->ulstate = UlepszeniaState::MAIN;
-            } else if (isInt(s)) {
-                int sint = atoi(s.c_str());
-                if (!this->player->equipUlepszenie(sint))
-                    this->outOfRangeError = true;
-            } else
-                this->notIntegerError = true;
-            break;
-        case MAIN:
-            if (checkCommand("p", s) || checkCommand("powrot", s)) {
+        case GameState::START:
+            // What to draw in START
+            if (checkCommand("autorzy", s) || checkCommand("a", s))
+                this->state = GameState::AUTORZY;
+            else if (checkCommand("start", s) || (checkCommand("s", s)))
                 this->state = GameState::GAME;
-            } else if (checkCommand("b", s) || checkCommand("kup", s)) {
-                this->ulstate = UlepszeniaState::KUP;
-            } else if (checkCommand("e", s) || checkCommand("eq", s) || checkCommand("ekwipunek", s)) {
-                this->ulstate = UlepszeniaState::EQ;
-            } else
+            else
                 this->commandNotFoundError = true;
             break;
-        default:
-            break;
-        }
-        break;
+        case GameState::GAME:
+            // What to draw in GAME
+            if (checkCommand("menu", s))
+                this->state = GameState::START;
+            else if (checkCommand("ulepszenia", s) || checkCommand("u", s))
+                this->state = GameState::ULEPSZENIA;
+            else if (checkCommand("powrot", s) || checkCommand("p", s))
+                this->state = GameState::START;
+            else
+                this->player->feedString(s);
 
-    default:
-        cout << "Something went wrong!";
-        break;
+            break;
+        case GameState::AUTORZY:
+            //// What to draw in AUTORZY
+            if (checkCommand("powrot", s) || checkCommand("p", s))
+                this->state = GameState::START;
+            else
+                this->commandNotFoundError = true;
+
+            break;
+        case GameState::ULEPSZENIA:
+            //// What to draw in ULEPSZENIA
+            switch (this->ulstate) {
+                case KUP:
+                    if (checkCommand("p", s) || checkCommand("powrot", s))
+                        this->ulstate = UlepszeniaState::MAIN;
+                    else if (isInt(s)) {
+                        int sint = atoi(s.c_str());
+                        bool jestUl = false;
+                        for (Ulepszenie *u : this->mozliweUlepszenia) {
+                            if (u->getId() == sint) {
+                                jestUl = true;
+                                break;
+                            }
+                        }
+                        if (jestUl) {
+                            if (this->player->maUlepszenie(atoi(s.c_str())))
+                                this->playerAlreadyBought = true;
+                            else if (!this->player->kupUlepszenie(atoi(s.c_str())))
+                                this->notEnoughMoneyError = true;
+                        } else
+                            this->outOfRangeError = true;
+                    } else
+                        this->notIntegerError = true;
+                    break;
+                case EQ:
+                    if (checkCommand("p", s) || checkCommand("powrot", s)) {
+                        this->ulstate = UlepszeniaState::MAIN;
+                    } else if (isInt(s)) {
+                        int sint = atoi(s.c_str());
+                        if (!this->player->equipUlepszenie(sint))
+                            this->outOfRangeError = true;
+                    } else
+                        this->notIntegerError = true;
+                    break;
+                case MAIN:
+                    if (checkCommand("p", s) || checkCommand("powrot", s)) {
+                        this->state = GameState::GAME;
+                    } else if (checkCommand("b", s) || checkCommand("kup", s)) {
+                        this->ulstate = UlepszeniaState::KUP;
+                    } else if (checkCommand("e", s) || checkCommand("eq", s) || checkCommand("ekwipunek", s)) {
+                        this->ulstate = UlepszeniaState::EQ;
+                    } else
+                        this->commandNotFoundError = true;
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        default:
+            cout << "Something went wrong!";
+            break;
     }
 }
 
@@ -210,198 +211,198 @@ void Game::Draw() {
     const string separator = "==============================================================================================================";
     const string nieZnaleziono = centerOnScreen("NIE MA TAKIEJ KOMENDY!");
     switch (this->getState()) {
-    case START:
-        // What to draw in START
-        s = {
-            separator,
-            "",
-            "",
-            centerOnScreen(" /$$$$$$$              /$$                     /$$ /$$           /$$                          "),
-            centerOnScreen("| $$__  $$            | $$                    | $$|__/          | $$                          "),
-            centerOnScreen("| $$  \\ $$  /$$$$$$  /$$$$$$          /$$$$$$$| $$ /$$  /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$ "),
-            centerOnScreen("| $$  | $$ /$$__  $$|_  $$_/         /$$_____/| $$| $$ /$$_____/| $$  /$$/ /$$__  $$ /$$__  $$"),
-            centerOnScreen("| $$  | $$| $$  \\ $$  | $$          | $$      | $$| $$| $$      | $$$$$$/ | $$$$$$$$| $$  \\__/"),
-            centerOnScreen("| $$  | $$| $$  | $$  | $$ /$$      | $$      | $$| $$| $$      | $$_  $$ | $$_____/| $$      "),
-            centerOnScreen("| $$$$$$$/|  $$$$$$/  |  $$$$/      |  $$$$$$$| $$| $$|  $$$$$$$| $$ \\  $$|  $$$$$$$| $$      "),
-            centerOnScreen("|_______/  \\______/    \\___/         \\_______/|__/|__/ \\_______/|__/  \\__/ \\_______/|__/      "),
-            "",
-            "",
-            "",
-            centerOnScreen("< Start Game     [ S ] >"),
-            "",
-            centerOnScreen("< Autorzy        [ A ] >"),
-            "",
-            centerOnScreen("< Wyjscie        [ Q ] >"),
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            separator};
-        if (this->commandNotFoundError) {
-            this->commandNotFoundError = false;
-            s.insert(s.end(), {nieZnaleziono, separator});
-        } else {
-            s.insert(s.end() - 2, {"", ""});
-        }
-        DrawFromVector(s);
-        break;
-    case AUTORZY:
-        a = {
-            separator,
-            "",
-            "",
-            centerOnScreen("  /$$$$$$              /$$                                            "),
-            centerOnScreen(" /$$__  $$            | $$                                            "),
-            centerOnScreen("| $$  \\ $$ /$$   /$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$"),
-            centerOnScreen("| $$$$$$$$| $$  | $$|_  $$_/   /$$__  $$ /$$__  $$|____ /$$/| $$  | $$"),
-            centerOnScreen("| $$__  $$| $$  | $$  | $$    | $$  \\ $$| $$  \\__/   /$$$$/ | $$  | $$"),
-            centerOnScreen("| $$  | $$| $$  | $$  | $$ /$$| $$  | $$| $$        /$$__/  | $$  | $$"),
-            centerOnScreen("| $$  | $$|  $$$$$$/  |  $$$$/|  $$$$$$/| $$       /$$$$$$$$|  $$$$$$$"),
-            centerOnScreen("|__/  |__/ \\______/    \\___/   \\______/ |__/      |________/ \\____  $$"),
-            centerOnScreen("                                                             /$$  | $$"),
-            centerOnScreen("                                                            |  $$$$$$/"),
-            centerOnScreen("                                                             \\______/ "),
-            "                                Marcin Majewski = Glowny Programista",
-            "",
-            "                                Karol Salacinski = Ulepszenia i Dodatki do Gry",
-            "",
-            "                                Maciej Gawin = Ulepszenia i Dodatki do Gry",
-            "",
-            "                                Krystian Sokolowski = Beater i Poprawa bledow",
-            "",
-            "                                Szymon Sloniowski = Interfejs Gry",
-            "",
-            controls,
-            separator};
-        if (this->commandNotFoundError) {
-            this->commandNotFoundError = false;
-            a.insert(a.end(), {nieZnaleziono, separator});
-        } else {
-            a.insert(a.end() - 2, {"", ""});
-        }
-        DrawFromVector(a);
-        break;
-    case GAME:
-        // What to draw in GAME
-        for (pair<string, int> chr : this->player->getCharacters()) {
-            lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
-            i++;
-        }
-        g = {
-            separator,
-            "",
-            centerOnScreen("Pieniadze: " + to_string(this->player->getMoney()) + "$"),
-            "",
-            centerOnScreen("< Ulepszenia     [ U ] >"),
-            "",
-            separator,
-            centerOnScreen("// Dostepne Slowa \\\\"),
-            lits};
-        while (g.size() < 25 - i)
-            g.insert(g.end(), "");
-        g.insert(g.end(), {controls, separator});
-        DrawFromVector(g);
-        break;
-    case ULEPSZENIA:
-        u = {
-            separator + "\n",
-            "",
-            centerOnScreen(" /$$   /$$ /$$                                                             /$$          "),
-            centerOnScreen("| $$  | $$| $$                                                            |__/          "),
-            centerOnScreen("| $$  | $$| $$  /$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$$  /$$$$$$  /$$$$$$$  /$$  /$$$$$$ "),
-            centerOnScreen("| $$  | $$| $$ /$$__  $$ /$$__  $$ /$$_____/|____ /$$/ /$$__  $$| $$__  $$| $$ |____  $$"),
-            centerOnScreen("| $$  | $$| $$| $$$$$$$$| $$  \\ $$|  $$$$$$    /$$$$/ | $$$$$$$$| $$  \\ $$| $$  /$$$$$$$"),
-            centerOnScreen("| $$  | $$| $$| $$_____/| $$  | $$ \\____  $$  /$$__/  | $$_____/| $$  | $$| $$ /$$__  $$"),
-            centerOnScreen("|  $$$$$$/| $$|  $$$$$$$| $$$$$$$/ /$$$$$$$/ /$$$$$$$$|  $$$$$$$| $$  | $$| $$|  $$$$$$$"),
-            centerOnScreen(" \\______/ |__/ \\_______/| $$____/ |_______/ |________/ \\_______/|__/  |__/|__/ \\_______/"),
-            centerOnScreen("                        | $$                                                            "),
-            centerOnScreen("                        |__/                                                            "),
-            "",
-            ""};
-        switch (this->ulstate) {
-        case KUP:
-            u.insert(u.end(), {
-                                  centerOnScreen("/\\/SKLEP\\/\\"),
-                                  "",
-                              });
-            for (const auto ulep : this->mozliweUlepszenia) {
-                if (!this->player->maUlepszenie(ulep->getId())) {
-                    string xx(to_string(ulep->getId()) + "  [ $" + to_string(ulep->getCost()) + " ] - " + ulep->getOpis());
-                    u.insert(u.end(), xx);
-                }
+        case START:
+            // What to draw in START
+            s = {
+                separator,
+                "",
+                "",
+                centerOnScreen(" /$$$$$$$              /$$                     /$$ /$$           /$$                          "),
+                centerOnScreen("| $$__  $$            | $$                    | $$|__/          | $$                          "),
+                centerOnScreen("| $$  \\ $$  /$$$$$$  /$$$$$$          /$$$$$$$| $$ /$$  /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$ "),
+                centerOnScreen("| $$  | $$ /$$__  $$|_  $$_/         /$$_____/| $$| $$ /$$_____/| $$  /$$/ /$$__  $$ /$$__  $$"),
+                centerOnScreen("| $$  | $$| $$  \\ $$  | $$          | $$      | $$| $$| $$      | $$$$$$/ | $$$$$$$$| $$  \\__/"),
+                centerOnScreen("| $$  | $$| $$  | $$  | $$ /$$      | $$      | $$| $$| $$      | $$_  $$ | $$_____/| $$      "),
+                centerOnScreen("| $$$$$$$/|  $$$$$$/  |  $$$$/      |  $$$$$$$| $$| $$|  $$$$$$$| $$ \\  $$|  $$$$$$$| $$      "),
+                centerOnScreen("|_______/  \\______/    \\___/         \\_______/|__/|__/ \\_______/|__/  \\__/ \\_______/|__/      "),
+                "",
+                "",
+                "",
+                centerOnScreen("< Start Game     [ S ] >"),
+                "",
+                centerOnScreen("< Autorzy        [ A ] >"),
+                "",
+                centerOnScreen("< Wyjscie        [ Q ] >"),
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                separator};
+            if (this->commandNotFoundError) {
+                this->commandNotFoundError = false;
+                s.insert(s.end(), {nieZnaleziono, separator});
+            } else {
+                s.insert(s.end() - 2, {"", ""});
             }
-            while (u.size() < 24 - ((this->playerAlreadyBought || this->kupnoSkrzynki || this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
-                u.insert(u.end(), "");
-            u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Kupic"));
+            DrawFromVector(s);
             break;
-        case EQ:
-            u.insert(u.end(), {centerOnScreen("/\\/EKWIPUNEK\\/\\"), ""});
-            for (const auto ulep : this->player->getUlepszenia()) {
-                u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
+        case AUTORZY:
+            a = {
+                separator,
+                "",
+                "",
+                centerOnScreen("  /$$$$$$              /$$                                            "),
+                centerOnScreen(" /$$__  $$            | $$                                            "),
+                centerOnScreen("| $$  \\ $$ /$$   /$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$"),
+                centerOnScreen("| $$$$$$$$| $$  | $$|_  $$_/   /$$__  $$ /$$__  $$|____ /$$/| $$  | $$"),
+                centerOnScreen("| $$__  $$| $$  | $$  | $$    | $$  \\ $$| $$  \\__/   /$$$$/ | $$  | $$"),
+                centerOnScreen("| $$  | $$| $$  | $$  | $$ /$$| $$  | $$| $$        /$$__/  | $$  | $$"),
+                centerOnScreen("| $$  | $$|  $$$$$$/  |  $$$$/|  $$$$$$/| $$       /$$$$$$$$|  $$$$$$$"),
+                centerOnScreen("|__/  |__/ \\______/    \\___/   \\______/ |__/      |________/ \\____  $$"),
+                centerOnScreen("                                                             /$$  | $$"),
+                centerOnScreen("                                                            |  $$$$$$/"),
+                centerOnScreen("                                                             \\______/ "),
+                "                                Marcin Majewski = Glowny Programista",
+                "",
+                "                                Karol Salacinski = Ulepszenia i Dodatki do Gry",
+                "",
+                "                                Maciej Gawin = Ulepszenia i Dodatki do Gry",
+                "",
+                "                                Krystian Sokolowski = Beater i Poprawa bledow",
+                "",
+                "                                Szymon Sloniowski = Interfejs Gry",
+                "",
+                controls,
+                separator};
+            if (this->commandNotFoundError) {
+                this->commandNotFoundError = false;
+                a.insert(a.end(), {nieZnaleziono, separator});
+            } else {
+                a.insert(a.end() - 2, {"", ""});
             }
-            while (u.size() < 24 - ((this->playerAlreadyBought || this->kupnoSkrzynki || this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
-                u.insert(u.end(), "");
-            u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc"));
+            DrawFromVector(a);
             break;
-        case MAIN:
-            u.insert(u.end(), {"",
-                               centerOnScreen("< Kup Ulepszenia [ B ] >"),
-                               "",
-                               centerOnScreen("< Ekwipunek      [ E ] >"),
-                               "",
-                               "",
-                               "",
-                               "",
-                               ""});
-            if (!this->commandNotFoundError) {
-                u.insert(u.end(), {"", ""});
+        case GAME:
+            // What to draw in GAME
+            for (pair<string, int> chr : this->player->getCharacters()) {
+                lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
+                i++;
             }
+            g = {
+                separator,
+                "",
+                centerOnScreen("Pieniadze: " + to_string(this->player->getMoney()) + "$"),
+                "",
+                centerOnScreen("< Ulepszenia     [ U ] >"),
+                "",
+                separator,
+                centerOnScreen("// Dostepne Slowa \\\\"),
+                lits};
+            while (g.size() < 25 - i)
+                g.insert(g.end(), "");
+            g.insert(g.end(), {controls, separator});
+            DrawFromVector(g);
+            break;
+        case ULEPSZENIA:
+            u = {
+                separator + "\n",
+                "",
+                centerOnScreen(" /$$   /$$ /$$                                                             /$$          "),
+                centerOnScreen("| $$  | $$| $$                                                            |__/          "),
+                centerOnScreen("| $$  | $$| $$  /$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$$  /$$$$$$  /$$$$$$$  /$$  /$$$$$$ "),
+                centerOnScreen("| $$  | $$| $$ /$$__  $$ /$$__  $$ /$$_____/|____ /$$/ /$$__  $$| $$__  $$| $$ |____  $$"),
+                centerOnScreen("| $$  | $$| $$| $$$$$$$$| $$  \\ $$|  $$$$$$    /$$$$/ | $$$$$$$$| $$  \\ $$| $$  /$$$$$$$"),
+                centerOnScreen("| $$  | $$| $$| $$_____/| $$  | $$ \\____  $$  /$$__/  | $$_____/| $$  | $$| $$ /$$__  $$"),
+                centerOnScreen("|  $$$$$$/| $$|  $$$$$$$| $$$$$$$/ /$$$$$$$/ /$$$$$$$$|  $$$$$$$| $$  | $$| $$|  $$$$$$$"),
+                centerOnScreen(" \\______/ |__/ \\_______/| $$____/ |_______/ |________/ \\_______/|__/  |__/|__/ \\_______/"),
+                centerOnScreen("                        | $$                                                            "),
+                centerOnScreen("                        |__/                                                            "),
+                "",
+                ""};
+            switch (this->ulstate) {
+                case KUP:
+                    u.insert(u.end(), {
+                                          centerOnScreen("/\\/SKLEP\\/\\"),
+                                          "",
+                                      });
+                    for (const auto ulep : this->mozliweUlepszenia) {
+                        if (!this->player->maUlepszenie(ulep->getId())) {
+                            string xx(to_string(ulep->getId()) + "  [ $" + to_string(ulep->getCost()) + " ] - " + ulep->getOpis());
+                            u.insert(u.end(), xx);
+                        }
+                    }
+                    while (u.size() < 24 - ((this->playerAlreadyBought || this->kupnoSkrzynki || this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+                        u.insert(u.end(), "");
+                    u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Kupic"));
+                    break;
+                case EQ:
+                    u.insert(u.end(), {centerOnScreen("/\\/EKWIPUNEK\\/\\"), ""});
+                    for (const auto ulep : this->player->getUlepszenia()) {
+                        u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
+                    }
+                    while (u.size() < 24 - ((this->playerAlreadyBought || this->kupnoSkrzynki || this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+                        u.insert(u.end(), "");
+                    u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc"));
+                    break;
+                case MAIN:
+                    u.insert(u.end(), {"",
+                                       centerOnScreen("< Kup Ulepszenia [ B ] >"),
+                                       "",
+                                       centerOnScreen("< Ekwipunek      [ E ] >"),
+                                       "",
+                                       "",
+                                       "",
+                                       "",
+                                       ""});
+                    if (!this->commandNotFoundError) {
+                        u.insert(u.end(), {"", ""});
+                    }
+                    break;
+                default:
+                    cout << (int)this->ulstate;
+            }
+            u.insert(u.end(), {controls, separator});
+            if (this->notEnoughMoneyError) {
+                this->notEnoughMoneyError = false;
+                u.insert(u.end(), {centerOnScreen("ZA MALO PIENIEDZY!"), separator});
+            }
+            if (this->notIntegerError && this->ulstate == UlepszeniaState::KUP) {
+                this->notIntegerError = false;
+                u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC CYFRA!"), separator});
+            }
+            if (this->notIntegerError && this->ulstate == UlepszeniaState::EQ) {
+                this->notIntegerError = false;
+                u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC NUMEREM!"), separator});
+            }
+            if (this->outOfRangeError && this->ulstate == UlepszeniaState::KUP) {
+                this->outOfRangeError = false;
+                u.insert(u.end(), {centerOnScreen("ULEPSZENIE O TAKIM ID NIE ISTNIEJE!"), separator});
+            }
+            if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
+                this->outOfRangeError = false;
+                u.insert(u.end(), {centerOnScreen("NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!"), separator});
+            }
+            if (this->playerAlreadyBought) {
+                this->playerAlreadyBought = false;
+                u.insert(u.end(), {centerOnScreen("JUZ KUPIONO ULEPSZENIE O TAKIM ID!"), separator});
+            }
+            if (this->commandNotFoundError) {
+                this->commandNotFoundError = false;
+                u.insert(u.end(), {nieZnaleziono, separator});
+            }
+            if (this->kupnoSkrzynki) {
+                this->kupnoSkrzynki = false;
+                u.insert(u.end(), {centerOnScreen("DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$"), separator});
+            }
+            DrawFromVector(u);
             break;
         default:
-            cout << (int)this->ulstate;
-        }
-        u.insert(u.end(), {controls, separator});
-        if (this->notEnoughMoneyError) {
-            this->notEnoughMoneyError = false;
-            u.insert(u.end(), {centerOnScreen("ZA MALO PIENIEDZY!"), separator});
-        }
-        if (this->notIntegerError && this->ulstate == UlepszeniaState::KUP) {
-            this->notIntegerError = false;
-            u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC CYFRA!"), separator});
-        }
-        if (this->notIntegerError && this->ulstate == UlepszeniaState::EQ) {
-            this->notIntegerError = false;
-            u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC NUMEREM!"), separator});
-        }
-        if (this->outOfRangeError && this->ulstate == UlepszeniaState::KUP) {
-            this->outOfRangeError = false;
-            u.insert(u.end(), {centerOnScreen("ULEPSZENIE O TAKIM ID NIE ISTNIEJE!"), separator});
-        }
-        if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
-            this->outOfRangeError = false;
-            u.insert(u.end(), {centerOnScreen("NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!"), separator});
-        }
-        if (this->playerAlreadyBought) {
-            this->playerAlreadyBought = false;
-            u.insert(u.end(), {centerOnScreen("JUZ KUPIONO ULEPSZENIE O TAKIM ID!"), separator});
-        }
-        if (this->commandNotFoundError) {
-            this->commandNotFoundError = false;
-            u.insert(u.end(), {nieZnaleziono, separator});
-        }
-        if (this->kupnoSkrzynki) {
-            this->kupnoSkrzynki = false;
-            u.insert(u.end(), {centerOnScreen("DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$"), separator});
-        }
-        DrawFromVector(u);
-        break;
-    default:
-        // grrrr, error
-        cout << "Something went wrong!";
-        this->stop();
-        break;
+            // grrrr, error
+            cout << "Something went wrong!";
+            this->stop();
+            break;
     }
 }
 
