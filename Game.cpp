@@ -349,7 +349,7 @@ void Game::Draw() {
             u.insert(u.end(), {"",
                                centerOnScreen("< Kup Ulepszenia [ B ] >"),
                                "",
-                               centerOnScreen("< Ekwipunek    [ E ] >"),
+                               centerOnScreen("< Ekwipunek      [ E ] >"),
                                "",
                                "",
                                "",
