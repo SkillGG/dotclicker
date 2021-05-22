@@ -77,6 +77,7 @@ public:
     bool commandNotFoundError;
     bool notEnoughMoneyError;
     bool outOfRangeError;
+    bool playerAlreadyBought;
     bool notIntegerError;
     std::string lastInput;
     Ulepszenie *getUlepszenie(int uid);

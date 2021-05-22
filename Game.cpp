@@ -10,6 +10,8 @@
 
 using namespace std;
 
+// ============================= HELPER FUNCTIONS
+
 bool isInt(const string &s) {
     if (s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+')))
         return false;
@@ -21,9 +23,8 @@ bool isInt(const string &s) {
 string centerOnScreen(string s) {
     size_t l = s.length();
     string r = "";
-    for (size_t p = 0; p < (110 - l) / 2; p++) {
+    for (size_t p = 0; p < (110 - l) / 2; p++)
         r += " ";
-    }
     return r + s;
 }
 
@@ -36,28 +37,25 @@ int checkCommand(string s1, string s2) {
     return false;    //not matched
 }
 
-Player::Player(Game *g) {
-    this->money = 0;
-    this->Gra = g;
-    this->ulepszenia = {};
+int countOccurences(const string &str, const string &findStr) {
+
+    const int step = findStr.size();
+    int count(0);
+    size_t pos(0);
+    while ((pos = str.find(findStr, pos)) != std::string::npos) {
+        pos += step;
+        ++count;
+    }
+    return count;
 }
 
-void Player::removeUlepszenie(int uid) {
-    for (size_t i = 0; i < this->ulepszenia.size(); i++) {
-        if (this->ulepszenia.at(i)->getId() == uid) {
-            this->ulepszenia.erase(this->ulepszenia.begin() + i);
-        }
+void DrawFromVector(vector<string> v) {
+    for (size_t i = 0; i < v.size(); i++) {
+        cout << v.at(i) << endl;
     }
 }
 
-int Ulepszenie::getId() { return this->id; }
-unsigned int Ulepszenie::getCost() { return this->cost; }
-
-Ulepszenie::Ulepszenie(int i, unsigned int c) {
-    this->id = i;
-    this->cost = c;
-    this->equipped = false;
-}
+// =========================== GAME
 
 /** Ustaw domyslne wartosci */
 Game::Game() {
@@ -72,6 +70,7 @@ Game::Game() {
     this->notIntegerError = false;
     this->outOfRangeError = false;
     this->notEnoughMoneyError = false;
+    this->playerAlreadyBought = false;
     this->lastInput = "";
     this->state = GameState::START;
     this->running = true;
@@ -84,27 +83,14 @@ Game::Game() {
 
 Game::~Game() {
     delete this->player;
-    for (auto n : this->mozliweUlepszenia) {
+    for (auto n : this->mozliweUlepszenia)
         delete n;
-    }
 }
 
 /** Zatrzymaj gre */
 void Game::stop() { this->running = false; }
 /** Sprawdz czy dziala gra */
 bool Game::isRunning() { return this->running; }
-
-int countOccurences(const string &str, const string &findStr) {
-
-    const int step = findStr.size();
-    int count(0);
-    size_t pos(0);
-    while ((pos = str.find(findStr, pos)) != std::string::npos) {
-        pos += step;
-        ++count;
-    }
-    return count;
-}
 
 UlepszeniaState Game::getUlState() { return this->ulstate; }
 GameState Game::getState() { return this->state; }
@@ -117,76 +103,50 @@ Ulepszenie *Game::getUlepszenie(int uid) {
     return nullptr;
 }
 
-unsigned int Player::calculateBaseMoney(string s) {
-    int base = 0;
-    for (const auto c : this->characters) {
-        string fr(c.first);
-        int ile(countOccurences(s, fr));
-        base += c.second * ile;
-    }
-    return base;
-}
-
-void Player::feedString(string s) {
-    if (checkCommand("rutek", s) && !this->Gra->rutek) {
-        this->addMoney(213742069);
-        this->Gra->rutek = true;
-        return;
-    }
-    int basemoney = calculateBaseMoney(s);
-    for (const auto f : this->ulepszenia) {
-        if (f->isEquipped())
-            basemoney += f->use(this->Gra, s, basemoney);
-    }
-    this->addMoney(basemoney);
-}
-
 /**
  * To jest funkcja ktora czyta userInput i ustawia rozne rzeczy zgodnie z nim
  */
 void Game::userInput(string s) {
     this->lastInput = s;
-    if (checkCommand("quit", s) || checkCommand("q", s)) {
+    if (checkCommand("quit", s) || checkCommand("q", s))
         this->stop();
-    }
     switch (this->getState()) {
-
     case GameState::START:
         // What to draw in START
-        if (checkCommand("autorzy", s) || checkCommand("a", s)) {
+        if (checkCommand("autorzy", s) || checkCommand("a", s))
             this->state = GameState::AUTORZY;
-        } else if (checkCommand("start", s) || (checkCommand("s", s))) {
+        else if (checkCommand("start", s) || (checkCommand("s", s)))
             this->state = GameState::GAME;
-        } else
+        else
             this->commandNotFoundError = true;
         break;
     case GameState::GAME:
         // What to draw in GAME
-        if (checkCommand("menu", s)) {
+        if (checkCommand("menu", s))
             this->state = GameState::START;
-        } else if (checkCommand("ulepszenia", s) || checkCommand("u", s)) {
+        else if (checkCommand("ulepszenia", s) || checkCommand("u", s))
             this->state = GameState::ULEPSZENIA;
-        } else if (checkCommand("powrot", s) || checkCommand("p", s)) {
+        else if (checkCommand("powrot", s) || checkCommand("p", s))
             this->state = GameState::START;
-        } else {
+        else
             this->player->feedString(s);
-        }
+
         break;
     case GameState::AUTORZY:
         //// What to draw in AUTORZY
-        if (checkCommand("powrot", s) || checkCommand("p", s)) {
+        if (checkCommand("powrot", s) || checkCommand("p", s))
             this->state = GameState::START;
-        } else {
+        else
             this->commandNotFoundError = true;
-        }
+
         break;
     case GameState::ULEPSZENIA:
         //// What to draw in ULEPSZENIA
         switch (this->ulstate) {
         case KUP:
-            if (checkCommand("p", s) || checkCommand("powrot", s)) {
+            if (checkCommand("p", s) || checkCommand("powrot", s))
                 this->ulstate = UlepszeniaState::MAIN;
-            } else if (isInt(s)) {
+            else if (isInt(s)) {
                 int sint = atoi(s.c_str());
                 bool jestUl = false;
                 for (Ulepszenie *u : this->mozliweUlepszenia) {
@@ -196,24 +156,22 @@ void Game::userInput(string s) {
                     }
                 }
                 if (jestUl) {
-                    if (!this->player->kupUlepszenie(atoi(s.c_str()))) {
+                    if (this->player->maUlepszenie(atoi(s.c_str())))
+                        this->playerAlreadyBought = true;
+                    else if (!this->player->kupUlepszenie(atoi(s.c_str())))
                         this->notEnoughMoneyError = true;
-                    }
-                } else {
+                } else
                     this->outOfRangeError = true;
-                }
-            } else {
+            } else
                 this->notIntegerError = true;
-            }
             break;
         case EQ:
             if (checkCommand("p", s) || checkCommand("powrot", s)) {
                 this->ulstate = UlepszeniaState::MAIN;
             } else if (isInt(s)) {
                 int sint = atoi(s.c_str());
-                if (!this->player->equipUlepszenie(sint)) {
+                if (!this->player->equipUlepszenie(sint))
                     this->outOfRangeError = true;
-                }
             } else
                 this->notIntegerError = true;
             break;
@@ -235,12 +193,6 @@ void Game::userInput(string s) {
     default:
         cout << "Something went wrong!";
         break;
-    }
-}
-
-void DrawFromVector(vector<string> v) {
-    for (size_t i = 0; i < v.size(); i++) {
-        cout << v.at(i) << endl;
     }
 }
 
@@ -327,7 +279,7 @@ void Game::Draw() {
             this->commandNotFoundError = false;
             a.insert(a.end(), {nieZnaleziono, separator});
         } else {
-            a.insert(a.end() - 2, {"", "", ""});
+            a.insert(a.end() - 2, {"", ""});
         }
         DrawFromVector(a);
         break;
@@ -380,7 +332,7 @@ void Game::Draw() {
                     u.insert(u.end(), xx);
                 }
             }
-            while (u.size() < 24 - ((this->kupnoSkrzynki || this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+            while (u.size() < 24 - ((this->playerAlreadyBought || this->kupnoSkrzynki || this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Kupic"));
             break;
@@ -389,7 +341,7 @@ void Game::Draw() {
             for (const auto ulep : this->player->getUlepszenia()) {
                 u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
             }
-            while (u.size() < 24 - ((this->kupnoSkrzynki || this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
+            while (u.size() < 24 - ((this->playerAlreadyBought || this->kupnoSkrzynki || this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
             u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc"));
             break;
@@ -419,19 +371,23 @@ void Game::Draw() {
             this->notIntegerError = false;
             u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC CYFRA!"), separator});
         }
-        if (this->outOfRangeError && this->ulstate == UlepszeniaState::KUP) {
-            this->outOfRangeError = false;
-            u.insert(u.end(), {centerOnScreen("ULEPSZENIE O TAKIM ID NIE ISTNIEJE!"), separator});
-        }
         if (this->notIntegerError && this->ulstate == UlepszeniaState::EQ) {
             this->notIntegerError = false;
             u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC NUMEREM!"), separator});
+        }
+        if (this->outOfRangeError && this->ulstate == UlepszeniaState::KUP) {
+            this->outOfRangeError = false;
+            u.insert(u.end(), {centerOnScreen("ULEPSZENIE O TAKIM ID NIE ISTNIEJE!"), separator});
         }
         if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
             this->outOfRangeError = false;
             u.insert(u.end(), {centerOnScreen("NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!"), separator});
         }
-        if (this->commandNotFoundError && this->ulstate == UlepszeniaState::MAIN) {
+        if (this->playerAlreadyBought) {
+            this->playerAlreadyBought = false;
+            u.insert(u.end(), {centerOnScreen("JUZ KUPIONO ULEPSZENIE O TAKIM ID!"), separator});
+        }
+        if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
             u.insert(u.end(), {nieZnaleziono, separator});
         }
@@ -449,13 +405,50 @@ void Game::Draw() {
     }
 }
 
+// =================== PLAYER
+
+Player::Player(Game *g) {
+    this->money = 0;
+    this->Gra = g;
+    this->ulepszenia = {};
+}
+
+void Player::removeUlepszenie(int uid) {
+    for (size_t i = 0; i < this->ulepszenia.size(); i++) {
+        if (this->ulepszenia.at(i)->getId() == uid)
+            this->ulepszenia.erase(this->ulepszenia.begin() + i);
+    }
+}
+
+unsigned int Player::calculateBaseMoney(string s) {
+    int base = 0;
+    for (const auto c : this->characters) {
+        string fr(c.first);
+        int ile(countOccurences(s, fr));
+        base += c.second * ile;
+    }
+    return base;
+}
+
+void Player::feedString(string s) {
+    if (checkCommand("rutek", s) && !this->Gra->rutek) {
+        this->addMoney(213742069);
+        this->Gra->rutek = true;
+        return;
+    }
+    int basemoney = calculateBaseMoney(s);
+    for (const auto f : this->ulepszenia) {
+        if (f->isEquipped())
+            basemoney += f->use(this->Gra, s, basemoney);
+    }
+    this->addMoney(basemoney);
+}
+
 unsigned int Player::getMoney() { return this->money; }
 
 void Player::addMoney(int i) { this->money += i; }
 
 bool Player::kupUlepszenie(int uid) {
-    if (this->maUlepszenie(uid))
-        return false;
     Ulepszenie *u = this->Gra->getUlepszenie(uid);
     if (this->getMoney() > u->getCost()) {
         this->money -= u->getCost();
@@ -497,6 +490,15 @@ void Player::addFeedableCharacter(string c, int i) { this->characters.insert(pai
 map<string, int> Player::getCharacters() { return this->characters; }
 
 // =========================== ULEPSZENIA
+
+int Ulepszenie::getId() { return this->id; }
+unsigned int Ulepszenie::getCost() { return this->cost; }
+
+Ulepszenie::Ulepszenie(int i, unsigned int c) {
+    this->id = i;
+    this->cost = c;
+    this->equipped = false;
+}
 
 PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(6, cost) {}
 
