@@ -244,6 +244,7 @@ void Game::Draw() {
     string lits = "\n";
     string ulepszeniaString = "";
     pair<char, int> chr;
+    string psp = "";
     size_t i = 0;
     const string separator = "==============================================================================================================";
     const string nieZnaleziono = "                                            NIE MA TAKIEJ KOMENDY!";
@@ -265,11 +266,11 @@ void Game::Draw() {
             "",
             "",
             "",
-            "                                       < Start Game     [ S ] >",
+            "                                           < Start Game     [ S ] >",
             "",
-            "                                       < Autorzy        [ A ] >",
+            "                                           < Autorzy        [ A ] >",
             "",
-            "                                       < Wyjscie        [ Q ] >",
+            "                                           < Wyjscie        [ Q ] >",
             "",
             "",
             "",
@@ -327,15 +328,19 @@ void Game::Draw() {
             lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
             i++;
         }
+        for (int pas = 0; pas < to_string(this->player->getMoney()).length(); pas += 2) {
+            psp += " ";
+        }
         g = {
             separator,
             "",
-            "                                                Pieniadze: " + to_string(this->player->getMoney()) + "$",
+            "                                               " + psp + "Pieniadze: " + to_string(this->player->getMoney()) + "$",
             "",
-            "                                            Ustaw Ulepszenia [ U ]",
+            "                                           < Ulepszenia     [ U ] >",
             "",
             separator,
-            "                                             // Dostepne Slowa \\\\", lits};
+            "                                             // Dostepne Slowa \\\\",
+            lits};
         while (g.size() < 25 - i)
             g.insert(g.end(), "");
         g.insert(g.end(), {"< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
@@ -385,10 +390,10 @@ void Game::Draw() {
             break;
         case MAIN:
             u.insert(u.end(), {"",
-                               "                                       < Kup Ulepszenia [ B ] >",
-                               "                                       < Ekwipunek      [ E ] >",
-
+                               "                                           < Kup Ulepszenia [ B ] >",
                                "",
+                               "                                           < Ekwipunek      [ E ] >",
+
                                "",
                                "",
                                "",
