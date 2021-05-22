@@ -18,6 +18,15 @@ bool isInt(const string &s) {
     return (*p == 0);
 }
 
+string centerOnScreen(string s) {
+    size_t l = s.length();
+    string r = "";
+    for (size_t p = 0; p < (110 - l) / 2; p++) {
+        r += " ";
+    }
+    return r + s;
+}
+
 int checkCommand(string s1, string s2) {
     //convert s1 and s2 into lower case strings
     transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
@@ -242,12 +251,12 @@ void DrawFromVector(vector<string> v) {
 void Game::Draw() {
     vector<string> m, s, g, u, a;
     string lits = "\n";
+    const string controls = centerOnScreen("< Powrot [ P ] >                                                                        < Wyjscie  [ Q ] >");
     string ulepszeniaString = "";
     pair<char, int> chr;
-    string psp = "";
     size_t i = 0;
     const string separator = "==============================================================================================================";
-    const string nieZnaleziono = "                                            NIE MA TAKIEJ KOMENDY!";
+    const string nieZnaleziono = centerOnScreen("NIE MA TAKIEJ KOMENDY!");
     switch (this->getState()) {
     case START:
         // What to draw in START
@@ -255,22 +264,22 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "          /$$$$$$$              /$$                     /$$ /$$           /$$                          ",
-            "         | $$__  $$            | $$                    | $$|__/          | $$                          ",
-            "         | $$  \\ $$  /$$$$$$  /$$$$$$          /$$$$$$$| $$ /$$  /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$ ",
-            "         | $$  | $$ /$$__  $$|_  $$_/         /$$_____/| $$| $$ /$$_____/| $$  /$$/ /$$__  $$ /$$__  $$",
-            "         | $$  | $$| $$  \\ $$  | $$          | $$      | $$| $$| $$      | $$$$$$/ | $$$$$$$$| $$  \\__/",
-            "         | $$  | $$| $$  | $$  | $$ /$$      | $$      | $$| $$| $$      | $$_  $$ | $$_____/| $$      ",
-            "         | $$$$$$$/|  $$$$$$/  |  $$$$/      |  $$$$$$$| $$| $$|  $$$$$$$| $$ \\  $$|  $$$$$$$| $$      ",
-            "         |_______/  \\______/    \\___/         \\_______/|__/|__/ \\_______/|__/  \\__/ \\_______/|__/      ",
+            centerOnScreen(" /$$$$$$$              /$$                     /$$ /$$           /$$                          "),
+            centerOnScreen("| $$__  $$            | $$                    | $$|__/          | $$                          "),
+            centerOnScreen("| $$  \\ $$  /$$$$$$  /$$$$$$          /$$$$$$$| $$ /$$  /$$$$$$$| $$   /$$  /$$$$$$   /$$$$$$ "),
+            centerOnScreen("| $$  | $$ /$$__  $$|_  $$_/         /$$_____/| $$| $$ /$$_____/| $$  /$$/ /$$__  $$ /$$__  $$"),
+            centerOnScreen("| $$  | $$| $$  \\ $$  | $$          | $$      | $$| $$| $$      | $$$$$$/ | $$$$$$$$| $$  \\__/"),
+            centerOnScreen("| $$  | $$| $$  | $$  | $$ /$$      | $$      | $$| $$| $$      | $$_  $$ | $$_____/| $$      "),
+            centerOnScreen("| $$$$$$$/|  $$$$$$/  |  $$$$/      |  $$$$$$$| $$| $$|  $$$$$$$| $$ \\  $$|  $$$$$$$| $$      "),
+            centerOnScreen("|_______/  \\______/    \\___/         \\_______/|__/|__/ \\_______/|__/  \\__/ \\_______/|__/      "),
             "",
             "",
             "",
-            "                                           < Start Game     [ S ] >",
+            centerOnScreen("< Start Game     [ S ] >"),
             "",
-            "                                           < Autorzy        [ A ] >",
+            centerOnScreen("< Autorzy        [ A ] >"),
             "",
-            "                                           < Wyjscie        [ Q ] >",
+            centerOnScreen("< Wyjscie        [ Q ] >"),
             "",
             "",
             "",
@@ -291,17 +300,17 @@ void Game::Draw() {
             separator,
             "",
             "",
-            "                       /$$$$$$              /$$                                            ",
-            "                      /$$__  $$            | $$                                            ",
-            "                     | $$  \\ $$ /$$   /$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$",
-            "                     | $$$$$$$$| $$  | $$|_  $$_/   /$$__  $$ /$$__  $$|____ /$$/| $$  | $$",
-            "                     | $$__  $$| $$  | $$  | $$    | $$  \\ $$| $$  \\__/   /$$$$/ | $$  | $$",
-            "                     | $$  | $$| $$  | $$  | $$ /$$| $$  | $$| $$        /$$__/  | $$  | $$",
-            "                     | $$  | $$|  $$$$$$/  |  $$$$/|  $$$$$$/| $$       /$$$$$$$$|  $$$$$$$",
-            "                     |__/  |__/ \\______/    \\___/   \\______/ |__/      |________/ \\____  $$",
-            "                                                                                  /$$  | $$",
-            "                                                                                 |  $$$$$$/",
-            "                                                                                  \\______/ ",
+            centerOnScreen("  /$$$$$$              /$$                                            "),
+            centerOnScreen(" /$$__  $$            | $$                                            "),
+            centerOnScreen("| $$  \\ $$ /$$   /$$ /$$$$$$    /$$$$$$   /$$$$$$  /$$$$$$$$ /$$   /$$"),
+            centerOnScreen("| $$$$$$$$| $$  | $$|_  $$_/   /$$__  $$ /$$__  $$|____ /$$/| $$  | $$"),
+            centerOnScreen("| $$__  $$| $$  | $$  | $$    | $$  \\ $$| $$  \\__/   /$$$$/ | $$  | $$"),
+            centerOnScreen("| $$  | $$| $$  | $$  | $$ /$$| $$  | $$| $$        /$$__/  | $$  | $$"),
+            centerOnScreen("| $$  | $$|  $$$$$$/  |  $$$$/|  $$$$$$/| $$       /$$$$$$$$|  $$$$$$$"),
+            centerOnScreen("|__/  |__/ \\______/    \\___/   \\______/ |__/      |________/ \\____  $$"),
+            centerOnScreen("                                                             /$$  | $$"),
+            centerOnScreen("                                                            |  $$$$$$/"),
+            centerOnScreen("                                                             \\______/ "),
             "                                Marcin Majewski = Glowny Programista",
             "",
             "                                Karol Salacinski = Ulepszenia i Dodatki do Gry",
@@ -312,7 +321,7 @@ void Game::Draw() {
             "",
             "                                Szymon Sloniowski = Interfejs Gry",
             "",
-            " < Powrot [ P ] >                                                                          < Wyjscie  [ Q ] >",
+            controls,
             separator};
         if (this->commandNotFoundError) {
             this->commandNotFoundError = false;
@@ -328,45 +337,41 @@ void Game::Draw() {
             lits += "'" + chr.first + "'" + " warte: " + to_string(chr.second) + "$\n";
             i++;
         }
-        for (int pas = 0; pas < to_string(this->player->getMoney()).length(); pas += 2) {
-            psp += " ";
-        }
         g = {
             separator,
             "",
-            "                                               " + psp + "Pieniadze: " + to_string(this->player->getMoney()) + "$",
+            centerOnScreen("Pieniadze: " + to_string(this->player->getMoney()) + "$"),
             "",
-            "                                           < Ulepszenia     [ U ] >",
+            centerOnScreen("< Ulepszenia     [ U ] >"),
             "",
             separator,
-            "                                             // Dostepne Slowa \\\\",
+            centerOnScreen("// Dostepne Slowa \\\\"),
             lits};
         while (g.size() < 25 - i)
             g.insert(g.end(), "");
-        g.insert(g.end(), {"< Powrot [ P ] >                                                                          < Wyjscie [ Q ] >",
-                           separator});
+        g.insert(g.end(), {controls, separator});
         DrawFromVector(g);
         break;
     case ULEPSZENIA:
         u = {
             separator + "\n",
             "",
-            "            /$$   /$$ /$$                                                             /$$   ",
-            "           | $$  | $$| $$                                                            |__/    ",
-            "           | $$  | $$| $$  /$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$$  /$$$$$$  /$$$$$$$  /$$  /$$$$$$ ",
-            "           | $$  | $$| $$ /$$__  $$ /$$__  $$ /$$_____/|____ /$$/ /$$__  $$| $$__  $$| $$ |____  $$",
-            "           | $$  | $$| $$| $$$$$$$$| $$  \\ $$|  $$$$$$    /$$$$/ | $$$$$$$$| $$  \\ $$| $$  /$$$$$$$",
-            "           | $$  | $$| $$| $$_____/| $$  | $$ \\____  $$  /$$__/  | $$_____/| $$  | $$| $$ /$$__  $$",
-            "           |  $$$$$$/| $$|  $$$$$$$| $$$$$$$/ /$$$$$$$/ /$$$$$$$$|  $$$$$$$| $$  | $$| $$|  $$$$$$$",
-            "            \\______/ |__/ \\_______/| $$____/ |_______/ |________/ \\_______/|__/  |__/|__/ \\_______/",
-            "                                   | $$",
-            "                                   |__/",
+            centerOnScreen(" /$$   /$$ /$$                                                             /$$          "),
+            centerOnScreen("| $$  | $$| $$                                                            |__/          "),
+            centerOnScreen("| $$  | $$| $$  /$$$$$$   /$$$$$$   /$$$$$$$ /$$$$$$$$  /$$$$$$  /$$$$$$$  /$$  /$$$$$$ "),
+            centerOnScreen("| $$  | $$| $$ /$$__  $$ /$$__  $$ /$$_____/|____ /$$/ /$$__  $$| $$__  $$| $$ |____  $$"),
+            centerOnScreen("| $$  | $$| $$| $$$$$$$$| $$  \\ $$|  $$$$$$    /$$$$/ | $$$$$$$$| $$  \\ $$| $$  /$$$$$$$"),
+            centerOnScreen("| $$  | $$| $$| $$_____/| $$  | $$ \\____  $$  /$$__/  | $$_____/| $$  | $$| $$ /$$__  $$"),
+            centerOnScreen("|  $$$$$$/| $$|  $$$$$$$| $$$$$$$/ /$$$$$$$/ /$$$$$$$$|  $$$$$$$| $$  | $$| $$|  $$$$$$$"),
+            centerOnScreen(" \\______/ |__/ \\_______/| $$____/ |_______/ |________/ \\_______/|__/  |__/|__/ \\_______/"),
+            centerOnScreen("                        | $$                                                            "),
+            centerOnScreen("                        |__/                                                            "),
             "",
             ""};
         switch (this->ulstate) {
         case KUP:
             u.insert(u.end(), {
-                                  "                                                  /\\/SKLEP\\/\\",
+                                  centerOnScreen("/\\/SKLEP\\/\\"),
                                   "",
                               });
             for (const auto ulep : this->mozliweUlepszenia) {
@@ -377,23 +382,22 @@ void Game::Draw() {
             }
             while (u.size() < 24 - ((this->kupnoSkrzynki || this->commandNotFoundError || this->notEnoughMoneyError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
-            u.insert(u.end(), "                                         Wpisz numer Ulepszenia aby Kupic");
+            u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Kupic"));
             break;
         case EQ:
-            u.insert(u.end(), {"                                                  /\\/EKWIPUNEK\\/\\", ""});
+            u.insert(u.end(), {centerOnScreen("/\\/EKWIPUNEK\\/\\"), ""});
             for (const auto ulep : this->player->getUlepszenia()) {
                 u.insert(u.end(), to_string(ulep->getId()) + " (" + (ulep->isEquipped() ? "ON" : "OFF") + ") - " + ulep->getOpis());
             }
             while (u.size() < 24 - ((this->kupnoSkrzynki || this->commandNotFoundError || this->notIntegerError || this->outOfRangeError) ? 2 : 0))
                 u.insert(u.end(), "");
-            u.insert(u.end(), "                                Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc");
+            u.insert(u.end(), centerOnScreen("Wpisz numer Ulepszenia aby Wlaczyc lub Wylaczyc"));
             break;
         case MAIN:
             u.insert(u.end(), {"",
-                               "                                           < Kup Ulepszenia [ B ] >",
+                               centerOnScreen("< Kup Ulepszenia [ B ] >"),
                                "",
-                               "                                           < Ekwipunek      [ E ] >",
-
+                               centerOnScreen("< Ekwipunek    [ E ] >"),
                                "",
                                "",
                                "",
@@ -406,26 +410,26 @@ void Game::Draw() {
         default:
             cout << (int)this->ulstate;
         }
-        u.insert(u.end(), {" < Powrot [ P ] >                                                                          < Wyjscie [ Q ] >", separator});
+        u.insert(u.end(), {controls, separator});
         if (this->notEnoughMoneyError) {
             this->notEnoughMoneyError = false;
-            u.insert(u.end(), {"                                               ZA MALO PIENIEDZY!", separator});
+            u.insert(u.end(), {centerOnScreen("ZA MALO PIENIEDZY!"), separator});
         }
         if (this->notIntegerError && this->ulstate == UlepszeniaState::KUP) {
             this->notIntegerError = false;
-            u.insert(u.end(), {"                                         ID ULEPSZENIA POWINNO BYC CYFRA!", separator});
+            u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC CYFRA!"), separator});
         }
         if (this->outOfRangeError && this->ulstate == UlepszeniaState::KUP) {
             this->outOfRangeError = false;
-            u.insert(u.end(), {"                                         ULEPSZENIE O TAKIM ID NIE ISTNIEJE!", separator});
+            u.insert(u.end(), {centerOnScreen("ULEPSZENIE O TAKIM ID NIE ISTNIEJE!"), separator});
         }
         if (this->notIntegerError && this->ulstate == UlepszeniaState::EQ) {
             this->notIntegerError = false;
-            u.insert(u.end(), {"                                         ID ULEPSZENIA POWINNO BYC NUMEREM!", separator});
+            u.insert(u.end(), {centerOnScreen("ID ULEPSZENIA POWINNO BYC NUMEREM!"), separator});
         }
         if (this->outOfRangeError && this->ulstate == UlepszeniaState::EQ) {
             this->outOfRangeError = false;
-            u.insert(u.end(), {"                                       NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!", separator});
+            u.insert(u.end(), {centerOnScreen("NIE MASZ KUPIONEGO ULEPSZENIA O TAKIM ID!"), separator});
         }
         if (this->commandNotFoundError && this->ulstate == UlepszeniaState::MAIN) {
             this->commandNotFoundError = false;
@@ -433,7 +437,7 @@ void Game::Draw() {
         }
         if (this->kupnoSkrzynki) {
             this->kupnoSkrzynki = false;
-            u.insert(u.end(), {"                                    DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$", separator});
+            u.insert(u.end(), {centerOnScreen("DROP #" + to_string(this->nrSkrzynki) + ": " + to_string(this->pienionzki) + "$"), separator});
         }
         DrawFromVector(u);
         break;
