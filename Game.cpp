@@ -30,6 +30,13 @@ string centerOnScreen(string s) {
     return r + s;
 }
 
+string putOnRight(string s) {
+    while (s.length() != 110) {
+        s = " " + s;
+    }
+    return s;
+}
+
 int checkCommand(string s1, string s2) {
     //convert s1 and s2 into lower case strings
     transform(s1.begin(), s1.end(), s1.begin(), ::tolower);
@@ -215,7 +222,7 @@ void Game::Draw() {
             // What to draw in START
             s = {
                 separator,
-                "",
+                putOnRight("Ver. 1.0.2b"),
                 "",
                 centerOnScreen(" /$$$$$$$              /$$                     /$$ /$$           /$$                          "),
                 centerOnScreen("| $$__  $$            | $$                    | $$|__/          | $$                          "),
