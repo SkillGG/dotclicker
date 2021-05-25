@@ -508,7 +508,7 @@ Ulepszenie::Ulepszenie(int i, unsigned int c) {
     this->equipped = false;
 }
 
-PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(6, cost) {}
+PodwojnePieniadze1::PodwojnePieniadze1(int cost) : Ulepszenie::Ulepszenie(5, cost) {}
 
 std::string PodwojnePieniadze1::getOpis() { return "Podwaja ilosc pieniedzy"; }
 int PodwojnePieniadze1::use(Game *g, string s, unsigned int bm) {
