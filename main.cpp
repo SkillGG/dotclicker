@@ -11,6 +11,7 @@ bool running = true;
 
 int main() {
     /* Game loop, nie tykac!! */
+    /*a co jak tykne?...*/
     system("resize -s 30 110");
     Game *g = new Game();
     while (g->isRunning() == true) {
