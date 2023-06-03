@@ -57,3 +57,19 @@
 	<string>
 	<thread>
 
+1685809116 source:c:\users\marci\programs\dotclicker\game.cpp
+	"Game.h"
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<algorithm>
+	<iostream>
+	<map>
+	<string>
+	<vector>
+
+1685809116 c:\users\marci\programs\dotclicker\game.h
+	<map>
+	<string>
+	<vector>
+

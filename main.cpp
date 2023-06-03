@@ -15,7 +15,11 @@ int main() {
     system("resize -s 30 110");
     Game *g = new Game();
     while (g->isRunning() == true) {
-        system("clear");
+        #if defined(_WIN32)
+            system("cls");
+        #else
+            system("clear");
+        #endif
         g->Draw();
         string s;
         getline(cin, s);
