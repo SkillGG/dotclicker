@@ -1,2 +1,2 @@
 # dotclicker
-DotClicker The Game
+DotClicker The Game (school project)
